@@ -27,6 +27,7 @@ export function BottomNav() {
             <Link
               key={href}
               href={href}
+              prefetch={true}
               className="relative flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-1 px-3"
             >
               {isActive && (
