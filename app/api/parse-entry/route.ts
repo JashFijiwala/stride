@@ -120,7 +120,7 @@ async function updateHabits(
   aiResult: Awaited<ReturnType<typeof parseJournalEntry>>,
   localResult: ReturnType<typeof runLocalParser>
 ) {
-  const today = logDate || format(new Date(), 'yyyy-MM-dd')
+  const today = logDate
   const yesterday = format(subDays(parseISO(today), 1), 'yyyy-MM-dd')
 
   // Get today's log rating to update avg_rating_with

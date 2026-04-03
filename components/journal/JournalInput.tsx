@@ -7,7 +7,7 @@ import { RatingSlider } from './RatingSlider'
 import { MoodSelector } from './MoodSelector'
 import { WeightInput } from './WeightInput'
 import { useJournal } from '@/hooks/useJournal'
-import type { DailyLog, ParsedEntry, MentalState } from '@/lib/types'
+import type { DailyLog } from '@/lib/types'
 
 const OFFLINE_KEY = 'stride_pending_entry'
 
@@ -23,12 +23,7 @@ interface PendingEntry {
 interface JournalInputProps {
   logDate: string
   existingLog?: DailyLog | null
-  onSaved: (result: {
-    log: DailyLog
-    entries: ParsedEntry[]
-    mental_state: MentalState | null
-    micro_insight: string | null
-  }) => void
+  onSaved: (log: DailyLog) => void
 }
 
 export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProps) {
@@ -42,7 +37,6 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
     existingLog?.weight_kg ? String(existingLog.weight_kg) : ''
   )
   const [saved, setSaved] = useState(false)
-  const [parseStatus, setParseStatus] = useState<string | null>(null)
   const [isOffline, setIsOffline] = useState(false)
   const [offlineSaved, setOfflineSaved] = useState(false)
   const [pendingRestored, setPendingRestored] = useState(false)
@@ -108,25 +102,14 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
       return
     }
 
-    setParseStatus('Saving your entry…')
+    const log = await saveEntry(entryData)
+    if (!log) return
 
-    const result = await saveEntry(entryData)
-
-    if (!result) {
-      setParseStatus(null)
-      return
-    }
-
-    // Clear offline backup now that it's saved to server
     localStorage.removeItem(OFFLINE_KEY)
 
-    setParseStatus('Stride is reading your entry…')
-    await new Promise((r) => setTimeout(r, 800))
-
     setSaved(true)
-    setParseStatus(null)
     await new Promise((r) => setTimeout(r, 600))
-    onSaved(result)
+    onSaved(log)
   }, [text, rating, mood, weight, logDate, saveEntry, onSaved])
 
   return (
@@ -209,20 +192,6 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
         </p>
       )}
 
-      {/* Status */}
-      <AnimatePresence>
-        {parseStatus && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="text-center text-sm text-[var(--text-muted)]"
-          >
-            {parseStatus}
-          </motion.p>
-        )}
-      </AnimatePresence>
-
       {/* Save button — hidden if already saved offline */}
       {!offlineSaved && (
         <motion.button
@@ -250,7 +219,7 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
                 className="flex items-center justify-center gap-2"
               >
                 <Loader2 size={18} className="animate-spin" />
-                {parseStatus ?? 'Saving…'}
+                Saving…
               </motion.span>
             ) : (
               <motion.span key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>

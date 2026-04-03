@@ -1,8 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Pencil, ChevronDown, ChevronUp } from 'lucide-react'
-import { useState } from 'react'
+import { Pencil } from 'lucide-react'
 import { DailyMicroInsight } from './DailyMicroInsight'
 import type { DailyLog, ParsedEntry, MentalState } from '@/lib/types'
 
@@ -53,8 +52,6 @@ export function ParsedEntryView({
   microInsight,
   onEdit,
 }: ParsedEntryViewProps) {
-  const [showRaw, setShowRaw] = useState(false)
-
   const positiveEntries = entries.filter((e) => e.sentiment === 'positive')
   const negativeEntries = entries.filter((e) => e.sentiment === 'negative')
   const neutralEntries = entries.filter((e) => e.sentiment === 'neutral')
@@ -191,26 +188,6 @@ export function ParsedEntryView({
         </div>
       )}
 
-      {/* Raw text toggle */}
-      <button
-        onClick={() => setShowRaw(!showRaw)}
-        className="flex w-full items-center justify-center gap-1.5 py-2 text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
-      >
-        {showRaw ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-        {showRaw ? 'Hide' : 'View'} original entry
-      </button>
-
-      {showRaw && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4"
-        >
-          <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--text-secondary)]">
-            {log.raw_text}
-          </pre>
-        </motion.div>
-      )}
     </div>
   )
 }
