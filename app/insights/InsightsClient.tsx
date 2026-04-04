@@ -49,7 +49,7 @@ export function InsightsClient({ userId }: InsightsClientProps) {
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-4 py-6">
 
-      {/* 1 — Bit-by-bit suggestion */}
+      {/* 1 — This Week's Nudge */}
       <SuggestionCard insight={weeklyInsight} totalDaysLogged={totalDaysLogged} />
 
       {/* 2 — Streaks */}
@@ -100,7 +100,7 @@ export function InsightsClient({ userId }: InsightsClientProps) {
       {/* 6 — Correlations */}
       {showCorrelations && (
         <section className="space-y-3">
-          <SectionHeading>What Moves Your Rating</SectionHeading>
+          <SectionHeading>What&apos;s shaping your days</SectionHeading>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {correlations.map((c, i) => (
               <CorrelationCard key={c.habit_name} correlation={c} index={i} />
@@ -132,10 +132,10 @@ export function InsightsClient({ userId }: InsightsClientProps) {
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
           <p className="text-2xl mb-2">📊</p>
           <p className="text-sm font-medium text-[var(--text-secondary)]">
-            Your insights will appear here
+            Your habit map starts here
           </p>
           <p className="mt-1 text-xs text-[var(--text-muted)]">
-            Start by saving your first journal entry on the Today tab.
+            Write your first entry and Stride will begin tracking your habits automatically. No setup needed.
           </p>
         </div>
       )}

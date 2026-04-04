@@ -7,9 +7,9 @@ import { ServiceWorkerRegistration } from '@/components/layout/ServiceWorkerRegi
 import { InstallPrompt } from '@/components/ui/InstallPrompt'
 
 export const metadata: Metadata = {
-  title: 'Stride — Improve your life, stride by stride',
+  title: 'Stride — Small strides. Big change.',
   description:
-    'A daily journaling app that helps you improve your routines gradually. Write freely, let AI find your patterns.',
+    'A habit tracker that works through your daily journal. Write about your day in plain English. AI tracks your habits, finds patterns, and suggests one small improvement per week.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,

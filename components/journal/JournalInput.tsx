@@ -157,6 +157,16 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
         )}
       </AnimatePresence>
 
+      {/* Weight */}
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 py-3">
+        <WeightInput value={weight} onChange={setWeight} />
+      </div>
+
+      {/* Mood */}
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
+        <MoodSelector value={mood} onChange={setMood} />
+      </div>
+
       {/* Text area */}
       <div className="relative rounded-2xl border border-[var(--border)] bg-[var(--card)] transition-colors focus-within:border-[var(--accent)]/50">
         <textarea
@@ -173,16 +183,6 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
       {/* Rating */}
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
         <RatingSlider value={rating} onChange={setRating} />
-      </div>
-
-      {/* Mood */}
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
-        <MoodSelector value={mood} onChange={setMood} />
-      </div>
-
-      {/* Weight */}
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 py-3">
-        <WeightInput value={weight} onChange={setWeight} />
       </div>
 
       {/* Error */}

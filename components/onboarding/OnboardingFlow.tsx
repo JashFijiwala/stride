@@ -6,24 +6,24 @@ import { motion, AnimatePresence } from 'framer-motion'
 const SCREENS = [
   {
     emoji: '📓',
-    title: 'Welcome to Stride',
-    subtitle: 'Write about your day. That\'s it.',
+    title: 'Your habits, finally visible',
+    subtitle: 'No forms. No checkboxes. No effort.',
     detail:
-      'No forms, no dropdowns. Just write freely — like texting yourself about your day.',
+      'Just write about your day like you\'re texting yourself. Stride reads it and tracks your habits automatically — no forms, no check-boxes, no effort.',
   },
   {
     emoji: '🔍',
-    title: 'We find the patterns',
-    subtitle: 'AI silently analyses your entries.',
+    title: 'Good habits grow. Bad ones shrink.',
+    subtitle: 'AI finds what shapes your best days.',
     detail:
-      'Stride reads what you write and finds what makes your good days good — automatically, in the background.',
+      'Every entry teaches Stride more about your patterns. It finds what makes your best days great — and what quietly pulls your worst days down.',
   },
   {
     emoji: '📈',
-    title: 'Improve, stride by stride',
-    subtitle: 'Small changes. Compounded daily.',
+    title: 'Small strides. Big change.',
+    subtitle: 'One small improvement per week.',
     detail:
-      'However bad your routine is, it can improve — but not suddenly. Day by day, bit by bit. Stride by stride.',
+      'You don\'t need to overhaul your life overnight. One small improvement per week, compounded over time, is all it takes. Stride keeps you honest — gently.',
   },
 ]
 

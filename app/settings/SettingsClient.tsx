@@ -508,11 +508,16 @@ export function SettingsClient({ userId, email }: { userId: string; email: strin
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <p className="border-t border-[var(--border)] px-5 pb-5 pt-4 text-sm leading-relaxed text-[var(--text-secondary)]">
-                Stride helps you improve your daily routine gradually. The philosophy is
-                simple: however bad your routine is, it can be improved — but not
-                suddenly. Day by day. Bit by bit. Stride by stride.
-              </p>
+              <div className="border-t border-[var(--border)] px-5 pb-5 pt-4 space-y-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+                <p>
+                  Stride is a habit tracker that works through your daily journal. Write
+                  about your day in plain English — Stride reads it, tracks your habits
+                  automatically, finds patterns in your behavior, and suggests one small
+                  improvement per week.
+                </p>
+                <p>No rigid forms. No checkboxes. No pressure.</p>
+                <p className="font-medium text-[var(--text-primary)]">Small strides. Big change.</p>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

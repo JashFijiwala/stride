@@ -21,7 +21,7 @@ export function SuggestionCard({ insight, totalDaysLogged }: SuggestionCardProps
           <Footprints size={14} className="text-[var(--accent)]" />
         </div>
         <p className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-          This week&apos;s stride
+          This Week&apos;s Nudge
         </p>
       </div>
 

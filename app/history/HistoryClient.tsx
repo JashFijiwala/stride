@@ -150,11 +150,11 @@ export function HistoryClient({ initialLogs, allLogDates, userId }: HistoryClien
         <div className="mt-8 flex flex-col items-center gap-2 text-center">
           <span className="text-3xl">📭</span>
           <p className="text-sm font-medium text-[var(--text-secondary)]">
-            No entries this month
+            {totalEntries === 0 ? 'Nothing logged yet' : 'No entries this month'}
           </p>
           <p className="text-xs text-[var(--text-muted)]">
             {totalEntries === 0
-              ? 'Start journaling today to see your history here.'
+              ? 'Start journaling today — even a few lines is enough. Stride will handle the rest.'
               : 'Navigate to a month where you have entries.'}
           </p>
         </div>

@@ -1,7 +1,7 @@
 {
   "name": "Stride",
   "short_name": "Stride",
-  "description": "Improve your life, stride by stride",
+  "description": "A habit tracker that works through your daily journal. Write freely — AI tracks your habits automatically.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0A0A0A",
