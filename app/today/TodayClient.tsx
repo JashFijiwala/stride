@@ -6,6 +6,7 @@ import { format, addDays, parseISO } from 'date-fns'
 import { Pencil, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useStore } from '@/lib/store/useStore'
 import { useJournal } from '@/hooks/useJournal'
 import { JournalInput } from '@/components/journal/JournalInput'
 import { ParsedEntryView } from '@/components/journal/ParsedEntryView'
@@ -48,11 +49,21 @@ function getRatingColor(v: number): string {
 export function TodayClient({ userId, currentLogDate, profileName, email }: TodayClientProps) {
   const router = useRouter()
   const { analyseEntry, analysing, error: analyseError } = useJournal()
+  const { currentName, setCurrentName } = useStore()
 
-  const [displayName, setDisplayName] = useState(
-    profileName ?? email.split('@')[0]
+  // Seed the store with the server-fetched name on first mount.
+  // After this, the store is the single source of truth — NameSetup writes
+  // to it directly so the greeting updates without any page refresh.
+  useEffect(() => {
+    if (!currentName) {
+      setCurrentName(profileName ?? email.split('@')[0])
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const [greeting, setGreeting] = useState(() =>
+    getGreeting(currentName ?? profileName ?? email.split('@')[0])
   )
-  const [greeting, setGreeting] = useState(() => getGreeting(profileName ?? email.split('@')[0]))
   const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>('idle')
 
   const [log, setLog] = useState<DailyLog | null>(null)
@@ -76,14 +87,15 @@ export function TodayClient({ userId, currentLogDate, profileName, email }: Toda
     }
   }, [profileName])
 
-  // Keep greeting updated if user leaves app open across time boundaries
+  // Re-compute greeting whenever the name in the store changes (NameSetup writes here)
+  // or when the clock crosses a time boundary (checked every minute)
   useEffect(() => {
-    const tick = () => setGreeting(getGreeting(displayName))
+    const name = currentName ?? profileName ?? email.split('@')[0]
+    const tick = () => setGreeting(getGreeting(name))
     tick()
-    // Check every minute
     const id = setInterval(tick, 60_000)
     return () => clearInterval(id)
-  }, [displayName])
+  }, [currentName, profileName, email])
 
   // Fetch today's log whenever the authoritative date changes
   useEffect(() => {
@@ -132,9 +144,9 @@ export function TodayClient({ userId, currentLogDate, profileName, email }: Toda
     ? format(parseISO(currentLogDate), 'EEEE, MMMM d')
     : ''
 
-  const handleNameComplete = useCallback((name: string) => {
-    setDisplayName(name)
-    setGreeting(getGreeting(name))
+  const handleNameComplete = useCallback((_name: string) => {
+    // Store was already updated in NameSetup before onComplete was called.
+    // The greeting effect will fire on its own from the store change.
     setOnboardingStep('onboarding')
   }, [])
 

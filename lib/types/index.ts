@@ -199,6 +199,8 @@ export interface NavTab {
 export interface AppState {
   user: Profile | null
   setUser: (user: Profile | null) => void
+  currentName: string | null
+  setCurrentName: (name: string) => void
   todayLog: DailyLog | null
   setTodayLog: (log: DailyLog | null) => void
   todayParsed: ParsedEntry[]

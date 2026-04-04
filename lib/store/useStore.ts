@@ -5,6 +5,9 @@ export const useStore = create<AppState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
 
+  currentName: null,
+  setCurrentName: (name) => set({ currentName: name }),
+
   todayLog: null,
   setTodayLog: (log) => set({ todayLog: log }),
 

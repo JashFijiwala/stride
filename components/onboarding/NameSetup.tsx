@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
+import { useStore } from '@/lib/store/useStore'
 
 interface NameSetupProps {
   userId: string
@@ -11,6 +12,7 @@ interface NameSetupProps {
 }
 
 export function NameSetup({ userId, onComplete, onSkip }: NameSetupProps) {
+  const { setCurrentName } = useStore()
   const [name, setName] = useState('')
   const [saving, setSaving] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -35,6 +37,8 @@ export function NameSetup({ userId, onComplete, onSkip }: NameSetupProps) {
         .from('profiles')
         .update({ name: trimmed })
         .eq('id', userId)
+      // Update store FIRST so the greeting reacts immediately, before any re-render
+      setCurrentName(trimmed)
       localStorage.setItem('stride_name_set', '1')
       onComplete(trimmed)
     } finally {
