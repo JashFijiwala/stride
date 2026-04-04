@@ -5,6 +5,7 @@ export interface Profile {
   name: string | null
   email: string | null
   timezone: string
+  current_log_date: string | null
   created_at: string
   updated_at: string
 }

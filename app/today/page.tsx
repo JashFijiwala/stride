@@ -21,16 +21,26 @@ export default async function TodayPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name')
+    .select('name, current_log_date')
     .eq('id', user.id)
     .single()
+
+  // Authoritative date comes from the profile, never the server clock
+  // Fall back to today's real date only if the column is missing (pre-migration users)
+  const currentLogDate =
+    profile?.current_log_date ??
+    new Date().toLocaleDateString('en-CA')
 
   const name = profile?.name ?? user.email?.split('@')[0] ?? 'there'
   const greeting = `${getGreeting()}, ${name}`
 
   return (
     <PageWrapper>
-      <TodayClient greeting={greeting} userId={user.id} />
+      <TodayClient
+        greeting={greeting}
+        userId={user.id}
+        currentLogDate={currentLogDate}
+      />
     </PageWrapper>
   )
 }

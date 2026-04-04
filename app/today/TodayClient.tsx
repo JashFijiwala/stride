@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { format } from 'date-fns'
+import { format, addDays, parseISO } from 'date-fns'
 import { Pencil, Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useJournal } from '@/hooks/useJournal'
 import { JournalInput } from '@/components/journal/JournalInput'
@@ -14,6 +15,7 @@ import type { DailyLog, ParsedEntry, MentalState } from '@/lib/types'
 interface TodayClientProps {
   greeting: string
   userId: string
+  currentLogDate: string
 }
 
 function getRatingColor(v: number): string {
@@ -22,11 +24,10 @@ function getRatingColor(v: number): string {
   return '#4ADE80'
 }
 
-export function TodayClient({ greeting, userId }: TodayClientProps) {
+export function TodayClient({ greeting, userId, currentLogDate }: TodayClientProps) {
+  const router = useRouter()
   const { analyseEntry, analysing, error: analyseError } = useJournal()
 
-  const [logDate, setLogDate] = useState('')
-  const [dateLabel, setDateLabel] = useState('')
   const [log, setLog] = useState<DailyLog | null>(null)
   const [entries, setEntries] = useState<ParsedEntry[]>([])
   const [mentalState, setMentalState] = useState<MentalState | null>(null)
@@ -34,6 +35,13 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
   const [editing, setEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const [showNewDayModal, setShowNewDayModal] = useState(false)
+  const [startingNewDay, setStartingNewDay] = useState(false)
+
+  // Friendly date label derived from the authoritative DB date, not the system clock
+  const dateLabel = currentLogDate
+    ? format(parseISO(currentLogDate), 'EEEE, MMMM d')
+    : ''
 
   useEffect(() => {
     if (!localStorage.getItem('stride_onboarding_complete')) {
@@ -41,11 +49,14 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
     }
   }, [])
 
+  // Re-run whenever the authoritative log date changes (e.g. after "Start New Day")
   useEffect(() => {
-    const today = new Date().toLocaleDateString('en-CA')
-    const label = format(new Date(), 'EEEE, MMMM d')
-    setLogDate(today)
-    setDateLabel(label)
+    setIsLoading(true)
+    setLog(null)
+    setEntries([])
+    setMentalState(null)
+    setMicroInsight(null)
+    setEditing(false)
 
     async function fetchTodayLog() {
       const supabase = createClient()
@@ -54,7 +65,7 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
         .from('daily_logs')
         .select('*')
         .eq('user_id', userId)
-        .eq('log_date', today)
+        .eq('log_date', currentLogDate)
         .single()
 
       if (todayLog?.ai_parsed) {
@@ -79,7 +90,7 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
     }
 
     fetchTodayLog()
-  }, [userId])
+  }, [userId, currentLogDate])
 
   const handleSaved = useCallback((savedLog: DailyLog) => {
     setLog(savedLog)
@@ -91,15 +102,33 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
 
   const handleAnalyse = useCallback(async () => {
     if (!log) return
-    const result = await analyseEntry(log.id, log.raw_text, logDate)
+    const result = await analyseEntry(log.id, log.raw_text, currentLogDate)
     if (!result) return
     setEntries(result.entries)
     setMentalState(result.mental_state)
     setMicroInsight(result.micro_insight)
-    setLog((prev) => prev ? { ...prev, ai_parsed: true } : prev)
-  }, [log, logDate, analyseEntry])
+    setLog((prev) => (prev ? { ...prev, ai_parsed: true } : prev))
+  }, [log, currentLogDate, analyseEntry])
 
-  // Determine which view to show
+  const handleConfirmNewDay = useCallback(async () => {
+    setStartingNewDay(true)
+    try {
+      const supabase = createClient()
+      // Increment the stored date by exactly 1 day — no system clock involved
+      const nextDate = format(addDays(parseISO(currentLogDate), 1), 'yyyy-MM-dd')
+      await supabase
+        .from('profiles')
+        .update({ current_log_date: nextDate })
+        .eq('id', userId)
+      setShowNewDayModal(false)
+      // Re-run the server component so it passes the new currentLogDate prop down
+      router.refresh()
+    } finally {
+      setStartingNewDay(false)
+    }
+  }, [currentLogDate, userId, router])
+
+  // Which view to render
   const view = isLoading
     ? 'loading'
     : !log || editing
@@ -107,6 +136,8 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
     : log.ai_parsed
     ? 'analysed'
     : 'saved'
+
+  const hasEntry = !!log && !editing
 
   return (
     <>
@@ -126,7 +157,7 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
         </div>
 
         <AnimatePresence mode="wait">
-          {/* ── Loading ─────────────────────────────────────────────────────── */}
+          {/* ── Loading ────────────────────────────────────────────────────── */}
           {view === 'loading' && (
             <motion.div
               key="loading"
@@ -142,7 +173,7 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
             </motion.div>
           )}
 
-          {/* ── State 1: No entry / editing ─────────────────────────────────── */}
+          {/* ── State 1: No entry / editing ──────────────────────────────── */}
           {view === 'input' && (
             <motion.div
               key="input"
@@ -152,14 +183,14 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
               transition={{ duration: 0.25 }}
             >
               <JournalInput
-                logDate={logDate}
+                logDate={currentLogDate}
                 existingLog={editing ? log : null}
                 onSaved={handleSaved}
               />
             </motion.div>
           )}
 
-          {/* ── State 2: Saved, not yet analysed ────────────────────────────── */}
+          {/* ── State 2: Saved, not yet analysed ─────────────────────────── */}
           {view === 'saved' && log && (
             <motion.div
               key="saved"
@@ -210,7 +241,6 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
                 </pre>
               </div>
 
-              {/* Error from analysis attempt */}
               {analyseError && (
                 <p className="rounded-xl bg-[var(--negative)]/10 px-4 py-2 text-sm text-[var(--negative)]">
                   {analyseError}
@@ -242,7 +272,7 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
             </motion.div>
           )}
 
-          {/* ── State 3: Saved + analysed ───────────────────────────────────── */}
+          {/* ── State 3: Saved + analysed ─────────────────────────────────── */}
           {view === 'analysed' && log && (
             <motion.div
               key="analysed"
@@ -261,7 +291,71 @@ export function TodayClient({ greeting, userId }: TodayClientProps) {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* ── Start New Day — subtle, only when an entry exists ─────────── */}
+        {hasEntry && !isLoading && (
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={() => setShowNewDayModal(true)}
+              className="text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
+            >
+              Start New Day →
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* ── Start New Day confirmation modal ──────────────────────────────── */}
+      <AnimatePresence>
+        {showNewDayModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm"
+            onClick={(e) => e.target === e.currentTarget && setShowNewDayModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6"
+            >
+              <h2 className="text-base font-semibold text-[var(--text-primary)]">
+                Start a new day?
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
+                Starting a new day will close today&apos;s log. You won&apos;t
+                be able to edit it after this. Ready to start fresh?
+              </p>
+              <div className="mt-5 flex gap-2">
+                <button
+                  onClick={() => setShowNewDayModal(false)}
+                  className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--card-elevated)] py-2.5 text-sm font-medium text-[var(--text-secondary)]"
+                >
+                  Not yet
+                </button>
+                <motion.button
+                  onClick={handleConfirmNewDay}
+                  disabled={startingNewDay}
+                  whileTap={{ scale: 0.97 }}
+                  className="flex-1 rounded-xl bg-[var(--accent)] py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+                >
+                  {startingNewDay ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 size={14} className="animate-spin" />
+                      Starting…
+                    </span>
+                  ) : (
+                    'Start New Day'
+                  )}
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
