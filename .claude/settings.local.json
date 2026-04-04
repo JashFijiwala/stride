@@ -5,7 +5,8 @@
       "Bash(npx tsc:*)",
       "Bash(npm run:*)",
       "Bash(node -e \"require\\('/c/Users/Jash Fijiwala/Desktop/stride/node_modules/date-fns/index.js'\\); console.log\\('date-fns v' + require\\('/c/Users/Jash Fijiwala/Desktop/stride/node_modules/date-fns/package.json'\\).version\\)\")",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm install:*)"
     ]
   }
 }
