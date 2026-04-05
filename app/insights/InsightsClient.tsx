@@ -1,12 +1,15 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { useState, useEffect } from 'react'
 import { useInsights } from '@/hooks/useInsights'
 import { useHabits } from '@/hooks/useHabits'
 import { SuggestionCard } from '@/components/insights/SuggestionCard'
 import { StreakSection } from '@/components/insights/StreakSection'
 import { WeeklySummaryCard } from '@/components/insights/WeeklySummaryCard'
 import { CorrelationCard } from '@/components/insights/CorrelationCard'
+import { PatternCard } from '@/components/insights/PatternCard'
+import { SkeletonCard } from '@/components/ui/Skeleton'
 
 // Lazy-load charts — they're heavy and not needed for initial paint
 const MoodTimeline = dynamic(
@@ -32,6 +35,14 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
   )
 }
 
+interface Pattern {
+  title: string
+  description: string
+  suggestion: string | null
+  confidence: 'medium' | 'high'
+  is_positive: boolean
+}
+
 interface InsightsClientProps {
   userId: string
 }
@@ -42,6 +53,27 @@ export function InsightsClient({ userId }: InsightsClientProps) {
 
   const { moodPoints, weeklyInsight, totalDaysLogged } = insights
   const { habits, correlations } = habitsData
+
+  const [patterns, setPatterns] = useState<Pattern[]>([])
+  const [patternsLoading, setPatternsLoading] = useState(false)
+
+  // Fetch patterns once insights data is loaded and we have enough days
+  useEffect(() => {
+    if (loading || totalDaysLogged < 14) return
+
+    setPatternsLoading(true)
+    fetch('/api/pattern-analysis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.insufficientData) setPatterns(data.patterns ?? [])
+      })
+      .catch(console.error)
+      .finally(() => setPatternsLoading(false))
+  }, [loading, totalDaysLogged, userId])
 
   const showCorrelations = totalDaysLogged >= 14 && correlations.length > 0
   const showTeaser14 = totalDaysLogged >= 7 && totalDaysLogged < 14
@@ -86,7 +118,26 @@ export function InsightsClient({ userId }: InsightsClientProps) {
         )}
       </section>
 
-      {/* 5 — Weekly summary */}
+      {/* 5 — Patterns (unlocks at 14 days) */}
+      {totalDaysLogged >= 14 && (patternsLoading || patterns.length > 0) && (
+        <section className="space-y-3">
+          <SectionHeading>Your Patterns</SectionHeading>
+          {patternsLoading ? (
+            <div className="space-y-3">
+              <SkeletonCard />
+              <SkeletonCard />
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {patterns.map((p, i) => (
+                <PatternCard key={`${p.title}-${i}`} pattern={p} index={i} />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* 6 — Weekly summary */}
       <section className="space-y-3">
         <SectionHeading>Weekly Summary</SectionHeading>
         <WeeklySummaryCard
@@ -97,7 +148,7 @@ export function InsightsClient({ userId }: InsightsClientProps) {
         />
       </section>
 
-      {/* 6 — Correlations */}
+      {/* 7 — Correlations */}
       {showCorrelations && (
         <section className="space-y-3">
           <SectionHeading>What&apos;s shaping your days</SectionHeading>
