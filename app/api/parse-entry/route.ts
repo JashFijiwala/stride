@@ -275,12 +275,21 @@ async function updateFutureHabits(
 
   const habits = (futureHabits as FutureHabitRow[]) ?? []
 
+  console.log('[future-habits] detected_habits from Gemini:', detectedHabitNames)
+  console.log('[future-habits] stored habit names:', habits.map((h) => h.habit_name))
+
   for (const detectedName of detectedHabitNames) {
-    // Find matching habit (case-insensitive)
-    const match = habits.find(
-      (h) => h.habit_name.toLowerCase() === detectedName.toLowerCase()
-    )
-    if (!match) continue
+    const detectedLower = detectedName.toLowerCase()
+    const match = habits.find((h) => {
+      const storedLower = h.habit_name.toLowerCase()
+      return storedLower.includes(detectedLower) || detectedLower.includes(storedLower)
+    })
+
+    if (!match) {
+      console.log(`[future-habits] "${detectedName}" → no match`)
+      continue
+    }
+    console.log(`[future-habits] "${detectedName}" → matched "${match.habit_name}"`)
 
     // Skip if already logged today
     if (match.last_detected === logDate) continue
