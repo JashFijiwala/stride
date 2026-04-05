@@ -21,8 +21,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
     }
 
+    // ── Addition 1: Fetch future habits to pass to parser ──────────────────
+    const { data: futureHabitsData } = await supabase
+      .from('future_habits')
+      .select('habit_name')
+      .eq('user_id', user.id)
+      .in('status', ['building', 'established'])
+
+    const futureHabitNames = (futureHabitsData ?? []).map(
+      (h: { habit_name: string }) => h.habit_name
+    )
+
     // ── Layer 1 + 2: Parse with local parser + Gemini ──────────────────────
-    const aiResult = await parseJournalEntry(raw_text)
+    const aiResult = await parseJournalEntry(raw_text, futureHabitNames.length > 0 ? futureHabitNames : undefined)
     const localResult = runLocalParser(raw_text)
 
     // Resolve final values (AI corrections take priority over local parser)
@@ -79,6 +90,11 @@ export async function POST(request: Request) {
 
     // ── Step 9: Update habits ───────────────────────────────────────────────
     await updateHabits(supabase, user.id, log_date, aiResult, localResult)
+
+    // ── Addition 3: Update future habit logs ────────────────────────────────
+    if (aiResult.detected_habits && aiResult.detected_habits.length > 0 && log_date) {
+      await updateFutureHabits(supabase, user.id, log_date, aiResult.detected_habits)
+    }
 
     // ── Step 10: Update daily_log ───────────────────────────────────────────
     const updateData: Record<string, unknown> = {
@@ -227,6 +243,80 @@ interface HabitRow {
   total_occurrences: number | null
   last_logged: string | null
   avg_rating_with: number | null
+}
+
+// ─── Future habit update logic ────────────────────────────────────────────────
+
+interface FutureHabitRow {
+  id: string
+  habit_name: string
+  current_streak: number
+  longest_streak: number
+  total_attempts: number
+  last_detected: string | null
+  status: string
+}
+
+async function updateFutureHabits(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  userId: string,
+  logDate: string,
+  detectedHabitNames: string[]
+) {
+  const yesterday = format(subDays(parseISO(logDate), 1), 'yyyy-MM-dd')
+
+  // Fetch all building/established future habits for this user
+  const { data: futureHabits } = await supabase
+    .from('future_habits')
+    .select('id, habit_name, current_streak, longest_streak, total_attempts, last_detected, status')
+    .eq('user_id', userId)
+    .in('status', ['building', 'established'])
+
+  const habits = (futureHabits as FutureHabitRow[]) ?? []
+
+  for (const detectedName of detectedHabitNames) {
+    // Find matching habit (case-insensitive)
+    const match = habits.find(
+      (h) => h.habit_name.toLowerCase() === detectedName.toLowerCase()
+    )
+    if (!match) continue
+
+    // Skip if already logged today
+    if (match.last_detected === logDate) continue
+
+    // Upsert into future_habit_logs
+    await supabase
+      .from('future_habit_logs')
+      .upsert(
+        { habit_id: match.id, user_id: userId, log_date: logDate, detected: true },
+        { onConflict: 'habit_id,log_date' }
+      )
+
+    // Recalculate streak
+    const wasYesterday = match.last_detected === yesterday
+    const newStreak = wasYesterday ? match.current_streak + 1 : 1
+    const newLongest = Math.max(match.longest_streak, newStreak)
+    const newAttempts = match.total_attempts + 1
+    const newStatus = newAttempts >= 21 ? 'established' : match.status
+
+    const futureHabitUpdate: Record<string, unknown> = {
+      total_attempts: newAttempts,
+      last_detected: logDate,
+      current_streak: newStreak,
+      longest_streak: newLongest,
+      status: newStatus,
+      updated_at: new Date().toISOString(),
+    }
+    if (match.last_detected === null) {
+      futureHabitUpdate.first_detected = logDate
+    }
+
+    await supabase
+      .from('future_habits')
+      .update(futureHabitUpdate)
+      .eq('id', match.id)
+  }
 }
 
 function findHabitMatch(habits: HabitRow[], candidateName: string): HabitRow | null {

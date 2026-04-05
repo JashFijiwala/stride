@@ -162,6 +162,7 @@ export interface AIParseResult {
     sleep_time: string | null
     weight_kg: number | null
   }
+  detected_habits?: string[]
 }
 
 export interface LocalParserResult {

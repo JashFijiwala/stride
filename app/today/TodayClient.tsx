@@ -75,6 +75,9 @@ export function TodayClient({ userId, currentLogDate, profileName, email }: Toda
   const [showNewDayModal, setShowNewDayModal] = useState(false)
   const [startingNewDay, setStartingNewDay] = useState(false)
 
+  interface HabitNudge { id: string; habit_id: string; habit_name: string }
+  const [nudges, setNudges] = useState<HabitNudge[]>([])
+
   // Decide onboarding step on mount
   useEffect(() => {
     const nameSet = !!localStorage.getItem('stride_name_set')
@@ -96,6 +99,63 @@ export function TodayClient({ userId, currentLogDate, profileName, email }: Toda
     const id = setInterval(tick, 60_000)
     return () => clearInterval(id)
   }, [currentName, profileName, email])
+
+  // Fetch habit nudges for habits with a 7+ streak that weren't logged today
+  useEffect(() => {
+    async function fetchNudges() {
+      const supabase = createClient()
+      const yesterday = format(addDays(parseISO(currentLogDate), -1), 'yyyy-MM-dd')
+
+      // Future habits with streak >= 7 that were last detected yesterday (at risk today)
+      const { data: atRiskHabits } = await supabase
+        .from('future_habits')
+        .select('id, habit_name')
+        .eq('user_id', userId)
+        .gte('current_streak', 7)
+        .eq('last_detected', yesterday)
+
+      if (!atRiskHabits || atRiskHabits.length === 0) return
+
+      // Upsert nudge records for today
+      const nudgeRows = atRiskHabits.map((h: { id: string }) => ({
+        habit_id: h.id,
+        user_id: userId,
+        nudge_date: currentLogDate,
+        dismissed: false,
+      }))
+
+      await supabase
+        .from('habit_nudges')
+        .upsert(nudgeRows, { onConflict: 'habit_id,nudge_date', ignoreDuplicates: true })
+
+      // Fetch today's undismissed nudges (join future_habits to get habit_name via FK)
+      const { data: todayNudges } = await supabase
+        .from('habit_nudges')
+        .select('id, habit_id, future_habits(habit_name)')
+        .eq('user_id', userId)
+        .eq('nudge_date', currentLogDate)
+        .eq('dismissed', false)
+
+      if (todayNudges) {
+        setNudges(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          todayNudges.map((n: any) => ({
+            id: n.id as string,
+            habit_id: n.habit_id as string,
+            habit_name: (Array.isArray(n.future_habits) ? n.future_habits[0]?.habit_name : n.future_habits?.habit_name) ?? '',
+          }))
+        )
+      }
+    }
+
+    fetchNudges().catch(console.error)
+  }, [userId, currentLogDate])
+
+  async function dismissNudge(nudgeId: string) {
+    const supabase = createClient()
+    await supabase.from('habit_nudges').update({ dismissed: true }).eq('id', nudgeId)
+    setNudges((prev) => prev.filter((n) => n.id !== nudgeId))
+  }
 
   // Fetch today's log whenever the authoritative date changes
   useEffect(() => {
@@ -220,6 +280,30 @@ export function TodayClient({ userId, currentLogDate, profileName, email }: Toda
       </AnimatePresence>
 
       <div className="mx-auto max-w-2xl px-4 py-6">
+        {/* Nudge banners */}
+        <AnimatePresence>
+          {nudges.map((nudge) => (
+            <motion.div
+              key={nudge.id}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+              transition={{ duration: 0.2 }}
+              className="mb-3 flex items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3"
+            >
+              <p className="text-sm text-amber-400">
+                🔥 Keep your <span className="font-medium capitalize">{nudge.habit_name}</span> streak alive — don&apos;t forget today
+              </p>
+              <button
+                onClick={() => dismissNudge(nudge.id)}
+                className="shrink-0 text-xs text-amber-400/70 hover:text-amber-400"
+              >
+                ✕
+              </button>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
         {/* Header */}
         <div className="mb-6">
           <p className="text-sm text-[var(--text-muted)]">{greeting}</p>

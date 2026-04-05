@@ -3,12 +3,12 @@ import { buildDailyParsePrompt } from './prompts'
 import { callGemini, extractJSON } from './gemini'
 import type { AIParseResult } from '@/lib/types'
 
-export async function parseJournalEntry(rawText: string): Promise<AIParseResult> {
+export async function parseJournalEntry(rawText: string, futureHabitNames?: string[]): Promise<AIParseResult> {
   // Layer 1: local parser (free, no API call)
   const localResult = runLocalParser(rawText)
 
   // Layer 2: Gemini
-  const prompt = buildDailyParsePrompt(rawText, localResult)
+  const prompt = buildDailyParsePrompt(rawText, localResult, futureHabitNames)
   const rawResponse = await callGemini(prompt)
   const parsed = extractJSON(rawResponse) as AIParseResult
 

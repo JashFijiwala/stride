@@ -9,6 +9,7 @@ import { StreakSection } from '@/components/insights/StreakSection'
 import { WeeklySummaryCard } from '@/components/insights/WeeklySummaryCard'
 import { CorrelationCard } from '@/components/insights/CorrelationCard'
 import { PatternCard } from '@/components/insights/PatternCard'
+import { FutureHabitsSection } from '@/components/insights/FutureHabitsSection'
 import { SkeletonCard } from '@/components/ui/Skeleton'
 
 // Lazy-load charts — they're heavy and not needed for initial paint
@@ -43,6 +44,17 @@ interface Pattern {
   is_positive: boolean
 }
 
+interface FutureHabit {
+  id: string
+  habit_name: string
+  status: string
+  total_attempts: number
+  current_streak: number
+  longest_streak: number
+  first_detected: string | null
+  last_detected: string | null
+}
+
 interface InsightsClientProps {
   userId: string
 }
@@ -56,6 +68,15 @@ export function InsightsClient({ userId }: InsightsClientProps) {
 
   const [patterns, setPatterns] = useState<Pattern[]>([])
   const [patternsLoading, setPatternsLoading] = useState(false)
+
+  const [futureHabits, setFutureHabits] = useState<FutureHabit[]>([])
+
+  useEffect(() => {
+    fetch('/api/future-habits/list')
+      .then((r) => r.json())
+      .then((data) => setFutureHabits(data.habits ?? []))
+      .catch(console.error)
+  }, [userId])
 
   // Fetch patterns once insights data is loaded and we have enough days
   useEffect(() => {
@@ -137,7 +158,17 @@ export function InsightsClient({ userId }: InsightsClientProps) {
         </section>
       )}
 
-      {/* 6 — Weekly summary */}
+      {/* 6 — Future habits */}
+      <section className="space-y-3">
+        <SectionHeading>Habits I&apos;m Building</SectionHeading>
+        <FutureHabitsSection
+          userId={userId}
+          habits={futureHabits}
+          onHabitAdded={(habit) => setFutureHabits((prev) => [...prev, habit])}
+        />
+      </section>
+
+      {/* 7 — Weekly summary */}
       <section className="space-y-3">
         <SectionHeading>Weekly Summary</SectionHeading>
         <WeeklySummaryCard
@@ -148,7 +179,7 @@ export function InsightsClient({ userId }: InsightsClientProps) {
         />
       </section>
 
-      {/* 7 — Correlations */}
+      {/* 8 — Correlations */}
       {showCorrelations && (
         <section className="space-y-3">
           <SectionHeading>What&apos;s shaping your days</SectionHeading>
