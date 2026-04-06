@@ -295,12 +295,14 @@ async function updateFutureHabits(
     if (match.last_detected === logDate) continue
 
     // Upsert into future_habit_logs
-    await supabase
+    console.log('[future-habits] attempting log upsert for habit:', match.id, 'date:', logDate)
+    const { error: logError } = await supabase
       .from('future_habit_logs')
       .upsert(
         { habit_id: match.id, user_id: userId, log_date: logDate, detected: true },
         { onConflict: 'habit_id,log_date' }
       )
+    console.log('[future-habits] log upsert result:', JSON.stringify(logError))
 
     // Recalculate streak
     const wasYesterday = match.last_detected === yesterday
@@ -321,10 +323,12 @@ async function updateFutureHabits(
       futureHabitUpdate.first_detected = logDate
     }
 
-    await supabase
+    console.log('[future-habits] attempting habit update for id:', match.id)
+    const { error: updateError } = await supabase
       .from('future_habits')
       .update(futureHabitUpdate)
       .eq('id', match.id)
+    console.log('[future-habits] habit update result:', JSON.stringify(updateError))
   }
 }
 
