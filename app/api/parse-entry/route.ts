@@ -275,9 +275,6 @@ async function updateFutureHabits(
 
   const habits = (futureHabits as FutureHabitRow[]) ?? []
 
-  console.log('[future-habits] detected_habits from Gemini:', detectedHabitNames)
-  console.log('[future-habits] stored habit names:', habits.map((h) => h.habit_name))
-
   for (const detectedName of detectedHabitNames) {
     const detectedLower = detectedName.toLowerCase()
     const match = habits.find((h) => {
@@ -285,24 +282,18 @@ async function updateFutureHabits(
       return storedLower.includes(detectedLower) || detectedLower.includes(storedLower)
     })
 
-    if (!match) {
-      console.log(`[future-habits] "${detectedName}" → no match`)
-      continue
-    }
-    console.log(`[future-habits] "${detectedName}" → matched "${match.habit_name}"`)
+    if (!match) continue
 
     // Skip if already logged today
     if (match.last_detected === logDate) continue
 
     // Upsert into future_habit_logs
-    console.log('[future-habits] attempting log upsert for habit:', match.id, 'date:', logDate)
-    const { error: logError } = await supabase
+    await supabase
       .from('future_habit_logs')
       .upsert(
         { habit_id: match.id, user_id: userId, log_date: logDate, detected: true },
         { onConflict: 'habit_id,log_date' }
       )
-    console.log('[future-habits] log upsert result:', JSON.stringify(logError))
 
     // Recalculate streak
     const wasYesterday = match.last_detected === yesterday
@@ -323,12 +314,10 @@ async function updateFutureHabits(
       futureHabitUpdate.first_detected = logDate
     }
 
-    console.log('[future-habits] attempting habit update for id:', match.id)
-    const { error: updateError } = await supabase
+    await supabase
       .from('future_habits')
       .update(futureHabitUpdate)
       .eq('id', match.id)
-    console.log('[future-habits] habit update result:', JSON.stringify(updateError))
   }
 }
 
