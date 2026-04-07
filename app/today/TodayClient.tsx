@@ -51,13 +51,12 @@ export function TodayClient({ userId, currentLogDate, profileName, email }: Toda
   const { analyseEntry, analysing, error: analyseError } = useJournal()
   const { currentName, setCurrentName } = useStore()
 
-  // Seed the store with the server-fetched name on first mount.
-  // After this, the store is the single source of truth — NameSetup writes
-  // to it directly so the greeting updates without any page refresh.
+  // Seed the store from the server-fetched profile name on every mount.
+  // profileName comes from profiles.name — always prefer it over anything
+  // already in the store, which may be a stale email-derived value.
+  // NameSetup also writes here directly so the greeting updates immediately.
   useEffect(() => {
-    if (!currentName) {
-      setCurrentName(profileName ?? email.split('@')[0])
-    }
+    setCurrentName(profileName ?? email.split('@')[0])
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
