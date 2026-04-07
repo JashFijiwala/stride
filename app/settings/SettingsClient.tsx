@@ -31,13 +31,35 @@ export function SettingsClient({ userId, email }: { userId: string; email: strin
   const [exportingFormat, setExportingFormat] = useState<ExportFormat | null>(null)
   const [exportDone, setExportDone] = useState<ExportFormat | null>(null)
 
+  const FOCUS_AREAS = [
+    { label: 'Better health & fitness', value: 'health' },
+    { label: 'Productivity & deep work', value: 'productivity' },
+    { label: 'Better sleep & recovery', value: 'sleep' },
+    { label: 'Mental wellbeing', value: 'mental_health' },
+    { label: 'Financial discipline', value: 'finance' },
+    { label: 'Learning & growth', value: 'learning' },
+  ]
+  const [goalsFocusAreas, setGoalsFocusAreas] = useState<string[]>([])
+  const [goalsPositiveHabits, setGoalsPositiveHabits] = useState(['', '', ''])
+  const [goalsNegativeHabits, setGoalsNegativeHabits] = useState(['', ''])
+  const [goalsSaving, setGoalsSaving] = useState(false)
+  const [goalsSaved, setGoalsSaved] = useState(false)
+
+  function toggleGoalsFocusArea(value: string) {
+    setGoalsFocusAreas((prev) => {
+      if (prev.includes(value)) return prev.filter((v) => v !== value)
+      if (prev.length >= 3) return [...prev.slice(1), value]
+      return [...prev, value]
+    })
+  }
+
   useEffect(() => setMounted(true), [])
 
   useEffect(() => {
     const supabase = createClient()
 
     async function loadStats() {
-      const [{ data: profileData }, { data: logs }, { data: allDates }] =
+      const [{ data: profileData }, { data: logs }, { data: allDates }, { data: goalsData }] =
         await Promise.all([
           supabase.from('profiles').select('name, created_at').eq('id', userId).single(),
           supabase
@@ -49,6 +71,11 @@ export function SettingsClient({ userId, email }: { userId: string; email: strin
             .from('daily_logs')
             .select('log_date')
             .eq('user_id', userId),
+          supabase
+            .from('user_goals')
+            .select('focus_areas, positive_habits, negative_habits')
+            .eq('user_id', userId)
+            .single(),
         ])
 
       setProfile({ name: profileData?.name ?? null })
@@ -59,6 +86,15 @@ export function SettingsClient({ userId, email }: { userId: string; email: strin
         streak: calculateCurrentStreak(dates),
         memberSince: profileData?.created_at ?? null,
       })
+
+      if (goalsData) {
+        const fa: string[] = goalsData.focus_areas ?? []
+        const ph: string[] = goalsData.positive_habits ?? []
+        const nh: string[] = goalsData.negative_habits ?? []
+        setGoalsFocusAreas(fa)
+        setGoalsPositiveHabits([ph[0] ?? '', ph[1] ?? '', ph[2] ?? ''])
+        setGoalsNegativeHabits([nh[0] ?? '', nh[1] ?? ''])
+      }
     }
 
     loadStats()
@@ -381,6 +417,28 @@ export function SettingsClient({ userId, email }: { userId: string; email: strin
     }
   }
 
+  async function handleSaveGoals() {
+    const filteredPositive = goalsPositiveHabits.map((h) => h.trim()).filter(Boolean)
+    const filteredNegative = goalsNegativeHabits.map((h) => h.trim()).filter(Boolean)
+    setGoalsSaving(true)
+    try {
+      await fetch('/api/goals/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          focus_areas: goalsFocusAreas,
+          positive_habits: filteredPositive,
+          negative_habits: filteredNegative,
+        }),
+      })
+      localStorage.setItem('stride_goals_set', 'true')
+      setGoalsSaved(true)
+      setTimeout(() => setGoalsSaved(false), 2500)
+    } finally {
+      setGoalsSaving(false)
+    }
+  }
+
   async function handleSignOut() {
     const supabase = createClient()
     await supabase.auth.signOut()
@@ -483,6 +541,104 @@ export function SettingsClient({ userId, email }: { userId: string; email: strin
               <p className="text-[10px] text-[var(--text-muted)]">{label}</p>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* My Goals */}
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+        <p className="mb-0.5 text-sm font-medium text-[var(--text-primary)]">My Goals</p>
+        <p className="mb-4 text-xs text-[var(--text-muted)]">
+          Stride uses these to give you more relevant insights and classifications.
+        </p>
+
+        {/* Focus areas */}
+        <p className="mb-2 text-xs font-medium text-[var(--text-secondary)]">Focus areas (up to 3)</p>
+        <div className="flex flex-wrap gap-2">
+          {FOCUS_AREAS.map((area) => {
+            const isSelected = goalsFocusAreas.includes(area.value)
+            return (
+              <motion.button
+                key={area.value}
+                type="button"
+                onClick={() => toggleGoalsFocusArea(area.value)}
+                animate={{
+                  backgroundColor: isSelected ? '#818CF8' : 'transparent',
+                  borderColor: isSelected ? '#818CF8' : 'var(--border)',
+                  scale: isSelected ? 1.04 : 1,
+                }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                className="rounded-full border px-3 py-1 text-xs font-medium"
+                style={{ color: isSelected ? '#ffffff' : 'var(--text-muted)' }}
+              >
+                {area.label}
+              </motion.button>
+            )
+          })}
+        </div>
+
+        {/* Positive habits */}
+        <p className="mb-2 mt-4 text-xs font-medium text-[var(--text-secondary)]">
+          Habits to build or maintain
+        </p>
+        <div className="space-y-2">
+          {(['e.g. work on my project', 'e.g. read every day', 'e.g. exercise'] as const).map(
+            (placeholder, i) => (
+              <input
+                key={i}
+                type="text"
+                value={goalsPositiveHabits[i]}
+                onChange={(e) =>
+                  setGoalsPositiveHabits((prev) => prev.map((h, idx) => (idx === i ? e.target.value : h)))
+                }
+                placeholder={placeholder}
+                maxLength={80}
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--card-elevated)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none focus:border-[var(--accent)]/60"
+              />
+            )
+          )}
+        </div>
+
+        {/* Negative habits */}
+        <p className="mb-2 mt-4 text-xs font-medium text-[var(--text-secondary)]">
+          Habits to reduce or quit
+        </p>
+        <div className="space-y-2">
+          {(['e.g. snacking', 'e.g. late night screen time'] as const).map((placeholder, i) => (
+            <input
+              key={i}
+              type="text"
+              value={goalsNegativeHabits[i]}
+              onChange={(e) =>
+                setGoalsNegativeHabits((prev) => prev.map((h, idx) => (idx === i ? e.target.value : h)))
+              }
+              placeholder={placeholder}
+              maxLength={80}
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--card-elevated)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none focus:border-[var(--accent)]/60"
+            />
+          ))}
+        </div>
+
+        {/* Save button */}
+        <div className="mt-4 flex items-center gap-3">
+          <button
+            onClick={handleSaveGoals}
+            disabled={goalsSaving}
+            className="rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+          >
+            {goalsSaving ? 'Saving…' : 'Save Goals'}
+          </button>
+          <AnimatePresence>
+            {goalsSaved && (
+              <motion.span
+                initial={{ opacity: 0, x: -4 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                className="text-xs text-[var(--positive)]"
+              >
+                Goals updated ✓
+              </motion.span>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

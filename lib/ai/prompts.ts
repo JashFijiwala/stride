@@ -3,13 +3,15 @@ import type { LocalParserResult } from '@/lib/types'
 export function buildDailyParsePrompt(
   rawText: string,
   parsed: LocalParserResult,
-  futureHabitNames?: string[]
+  futureHabitNames?: string[],
+  goalsContext?: string
 ): string {
   // Compact pre-extracted: skip pretty-printing to save tokens
   const meta = `wake:${parsed.wake_time ?? '?'} sleep:${parsed.sleep_time ?? '?'} weight:${parsed.weight_kg ?? '?'} rating:${parsed.self_rating ?? '?'}`
   const lines = parsed.lines.join('\n')
 
-  let prompt = `Stride journal parser. Return ONE valid JSON object. No markdown, no trailing commas, no comments, no extra text.
+  let prompt = goalsContext ? `${goalsContext}\n\n` : ''
+  prompt += `Stride journal parser. Return ONE valid JSON object. No markdown, no trailing commas, no comments, no extra text.
 
 CRITICAL: Valid JSON only. No trailing commas. Complete the full response.
 

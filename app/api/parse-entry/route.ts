@@ -32,8 +32,39 @@ export async function POST(request: Request) {
       (h: { habit_name: string }) => h.habit_name
     )
 
+    // ── Goals context: prepend user goals to Gemini prompt if set ──────────
+    let goalsContext: string | undefined
+    const { data: userGoals } = await supabase
+      .from('user_goals')
+      .select('focus_areas, positive_habits, negative_habits')
+      .eq('user_id', user.id)
+      .single()
+
+    if (userGoals) {
+      const focusAreas: string[] = userGoals.focus_areas ?? []
+      const positiveHabits: string[] = userGoals.positive_habits ?? []
+      const negativeHabits: string[] = userGoals.negative_habits ?? []
+
+      if (focusAreas.length > 0 || positiveHabits.length > 0 || negativeHabits.length > 0) {
+        const parts: string[] = ['User context for classification:']
+        if (focusAreas.length > 0) parts.push(`- They are focused on: ${focusAreas.join(', ')}`)
+        if (positiveHabits.length > 0) parts.push(`- Habits they consider POSITIVE and want to build: ${positiveHabits.join(', ')}`)
+        if (negativeHabits.length > 0) parts.push(`- Habits they want to REDUCE or quit: ${negativeHabits.join(', ')}`)
+        parts.push('')
+        parts.push('Use this context when determining sentiment.')
+        parts.push('If an activity matches something in their positive habits list, classify it as positive even if it would normally be neutral.')
+        parts.push('If an activity matches their negative habits list, classify it as negative even if it would normally be neutral.')
+        parts.push('Semantic matching — "worked on my project" matches "work on my project".')
+        goalsContext = parts.join('\n')
+      }
+    }
+
     // ── Layer 1 + 2: Parse with local parser + Gemini ──────────────────────
-    const aiResult = await parseJournalEntry(raw_text, futureHabitNames.length > 0 ? futureHabitNames : undefined)
+    const aiResult = await parseJournalEntry(
+      raw_text,
+      futureHabitNames.length > 0 ? futureHabitNames : undefined,
+      goalsContext
+    )
     const localResult = runLocalParser(raw_text)
 
     // Resolve final values (AI corrections take priority over local parser)
