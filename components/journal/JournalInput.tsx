@@ -3,8 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Loader2, WifiOff } from 'lucide-react'
-import { RatingSlider } from './RatingSlider'
-import { MoodSelector } from './MoodSelector'
+import { RatingSlider, getMoodEmojiFromRating } from './RatingSlider'
 import { WeightInput } from './WeightInput'
 import { useJournal } from '@/hooks/useJournal'
 import type { DailyLog } from '@/lib/types'
@@ -31,8 +30,7 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
   const { saving, error, saveEntry } = useJournal()
 
   const [text, setText] = useState(existingLog?.raw_text ?? '')
-  const [rating, setRating] = useState<number | null>(existingLog?.self_rating ?? null)
-  const [mood, setMood] = useState<string | null>(existingLog?.mood_emoji ?? null)
+  const [rating, setRating] = useState<number>(existingLog?.self_rating ?? 5)
   const [weight, setWeight] = useState(
     existingLog?.weight_kg ? String(existingLog.weight_kg) : ''
   )
@@ -63,8 +61,7 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
       const pending: PendingEntry = JSON.parse(raw)
       if (pending.log_date === logDate) {
         setText(pending.raw_text)
-        setRating(pending.self_rating)
-        setMood(pending.mood_emoji)
+        setRating(pending.self_rating ?? 5)
         setWeight(pending.weight_kg ? String(pending.weight_kg) : '')
         setPendingRestored(true)
       }
@@ -86,7 +83,7 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
     const entryData = {
       raw_text: text.trim(),
       self_rating: rating,
-      mood_emoji: mood,
+      mood_emoji: getMoodEmojiFromRating(rating),
       weight_kg: weight ? parseFloat(weight) : null,
       log_date: logDate,
     }
@@ -110,7 +107,7 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
     setSaved(true)
     await new Promise((r) => setTimeout(r, 600))
     onSaved(log)
-  }, [text, rating, mood, weight, logDate, saveEntry, onSaved])
+  }, [text, rating, weight, logDate, saveEntry, onSaved])
 
   return (
     <div className="space-y-5">
@@ -160,11 +157,6 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
       {/* Weight */}
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 py-3">
         <WeightInput value={weight} onChange={setWeight} />
-      </div>
-
-      {/* Mood */}
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
-        <MoodSelector value={mood} onChange={setMood} />
       </div>
 
       {/* Text area */}

@@ -1,76 +1,80 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
-interface RatingSliderProps {
-  value: number | null
-  onChange: (v: number) => void
+export function getMoodEmojiFromRating(rating: number): string {
+  if (rating <= 4.0) return '😔'
+  if (rating <= 6.0) return '😐'
+  if (rating <= 8.0) return '🙂'
+  return '😄'
 }
 
 function getRatingColor(v: number): string {
-  if (v <= 3) return '#F87171'    // red
-  if (v <= 6) return '#FBBF24'    // amber
-  return '#4ADE80'                 // green
+  if (v <= 4) return '#F87171'
+  if (v <= 6) return '#FBBF24'
+  return '#4ADE80'
+}
+
+interface RatingSliderProps {
+  value: number
+  onChange: (value: number) => void
 }
 
 export function RatingSlider({ value, onChange }: RatingSliderProps) {
+  const emoji = getMoodEmojiFromRating(value)
+  const color = getRatingColor(value)
+  const displayValue = value % 1 === 0 ? String(value) : value.toFixed(1)
+
   return (
     <div>
-      <p className="mb-3 text-sm font-medium text-[var(--text-secondary)]">
+      <p className="mb-4 text-sm font-medium text-[var(--text-secondary)]">
         How would you rate today?
       </p>
-      <div className="flex items-center justify-between gap-1">
-        {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => {
-          const isSelected = value === n
-          const color = getRatingColor(n)
-          return (
-            <motion.button
-              key={n}
-              type="button"
-              onClick={() => onChange(n)}
-              whileTap={{ scale: 0.85 }}
-              className="relative flex flex-1 flex-col items-center"
+      <div className="flex items-center gap-4">
+        {/* Emoji — key is the bracket emoji, so AnimatePresence only fires on bracket change */}
+        <div className="flex w-8 shrink-0 items-center justify-center">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={emoji}
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                transition: { type: 'spring', stiffness: 300, damping: 20 },
+              }}
+              exit={{
+                scale: 0.5,
+                opacity: 0,
+                transition: { duration: 0.15 },
+              }}
+              className="select-none text-2xl"
             >
-              <motion.div
-                animate={{
-                  width: isSelected ? 32 : 24,
-                  height: isSelected ? 32 : 24,
-                  backgroundColor: isSelected ? color : '#262626',
-                  borderColor: isSelected ? color : '#3F3F46',
-                  borderWidth: 2,
-                }}
-                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                style={{ borderRadius: '50%' }}
-                className="flex items-center justify-center border-2"
-              >
-                {isSelected && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="text-[10px] font-bold text-white"
-                  >
-                    {n}
-                  </motion.span>
-                )}
-              </motion.div>
-              {!isSelected && (
-                <span className="mt-1 text-[9px] text-[var(--text-muted)]">{n}</span>
-              )}
-            </motion.button>
-          )
-        })}
-      </div>
-      {value && (
-        <motion.p
-          key={value}
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-3 text-center text-sm font-medium"
-          style={{ color: getRatingColor(value) }}
+              {emoji}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+
+        {/* Range slider */}
+        <input
+          type="range"
+          min={1}
+          max={10}
+          step={0.5}
+          value={value}
+          onChange={(e) => onChange(parseFloat(e.target.value))}
+          className="flex-1 cursor-pointer"
+          style={{ accentColor: color }}
+        />
+
+        {/* Large colored number */}
+        <motion.span
+          animate={{ color }}
+          transition={{ duration: 0.2 }}
+          className="w-10 shrink-0 text-right text-2xl font-bold tabular-nums"
         >
-          {value <= 3 ? 'Rough day' : value <= 5 ? 'Average day' : value <= 7 ? 'Good day' : 'Great day'}
-        </motion.p>
-      )}
+          {displayValue}
+        </motion.span>
+      </div>
     </div>
   )
 }
