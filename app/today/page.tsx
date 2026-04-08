@@ -14,7 +14,7 @@ export default async function TodayPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, current_log_date')
+    .select('name, current_log_date, name_set, goals_set, onboarding_complete')
     .eq('id', user.id)
     .single()
 
@@ -29,6 +29,9 @@ export default async function TodayPage() {
         currentLogDate={currentLogDate}
         profileName={profile?.name ?? null}
         email={user.email ?? ''}
+        nameSet={profile?.name_set ?? false}
+        goalsSet={profile?.goals_set ?? false}
+        onboardingComplete={profile?.onboarding_complete ?? false}
       />
     </PageWrapper>
   )
