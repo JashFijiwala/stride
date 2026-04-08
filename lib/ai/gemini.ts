@@ -18,7 +18,7 @@ export async function callGemini(prompt: string): Promise<string> {
   const model = genAI.getGenerativeModel({
     model: MODEL_NAME,
     generationConfig: {
-      maxOutputTokens: 8192,
+      maxOutputTokens: 16384,
       temperature: 0.1,
     },
   })
@@ -65,8 +65,7 @@ export function extractJSON(text: string): unknown {
     }
   }
 
-  // Attempt 4: truncation recovery — find the last complete entry object
-  // and close the JSON manually so partial results are returned
+  // Attempt 4: truncation recovery — multiple strategies, most to least conservative
   console.warn('[Gemini] JSON appears truncated, attempting partial recovery')
   const jsonStart = cleaned.indexOf('{')
   if (jsonStart === -1) {
@@ -75,24 +74,54 @@ export function extractJSON(text: string): unknown {
 
   const partial = cleaned.slice(jsonStart)
 
-  // Find the last complete entry: locate the last "}," or "}" that closes
-  // an entries element before the truncation point
-  const lastCompleteEntry = partial.lastIndexOf('"}')
-  if (lastCompleteEntry === -1) {
-    throw new Error(`Cannot recover truncated JSON. Raw: ${text.slice(0, 300)}`)
+  // Defaults appended after the last complete entry to close the structure
+  const TAIL = `],"mental_state":{"primary_mood":"unknown","energy_level":"moderate","stress_level":"moderate","mood_score":5,"emotional_tags":[],"summary":"Analysis was incomplete due to response length."},"micro_insight":"Entry saved. Full analysis was unavailable.","corrections":{"wake_time":null,"sleep_time":null,"weight_kg":null}}`
+
+  // Strategy A: cut after last `"}` — handles entries ending with a string field
+  const cutA = partial.lastIndexOf('"}')
+
+  // Strategy B: cut after last `}` anywhere — handles entries ending with
+  // number, null, or array values (e.g. "duration_mins":30} or "tags":["x"]})
+  let cutB = -1
+  for (let i = partial.length - 1; i >= 0; i--) {
+    if (partial[i] === '}') { cutB = i; break }
   }
 
-  // Build a minimal valid JSON by closing off the entries array and
-  // filling in empty defaults for the remaining required fields
-  const recovered =
-    partial.slice(0, lastCompleteEntry + 2) +
-    `],"mental_state":{"primary_mood":"unknown","energy_level":"moderate","stress_level":"moderate","mood_score":5,"emotional_tags":[],"summary":"Analysis was incomplete due to response length."},"micro_insight":"Entry saved. Full analysis was unavailable.","corrections":{"wake_time":null,"sleep_time":null,"weight_kg":null}}`
-
-  try {
-    const result = JSON.parse(recovered)
-    console.warn('[Gemini] Partial recovery succeeded with', result.entries?.length ?? 0, 'entries')
-    return result
-  } catch {
-    throw new Error(`Truncation recovery failed. Raw: ${text.slice(0, 300)}`)
+  // Strategy C: auto-close by counting unmatched brackets, then parse.
+  // Walks the string tracking open braces/brackets outside of strings.
+  function autoClose(s: string): string {
+    const stack: string[] = []
+    let inStr = false
+    let esc = false
+    for (const ch of s) {
+      if (esc) { esc = false; continue }
+      if (ch === '\\' && inStr) { esc = true; continue }
+      if (ch === '"') { inStr = !inStr; continue }
+      if (inStr) continue
+      if (ch === '{' || ch === '[') stack.push(ch)
+      else if ((ch === '}' || ch === ']') && stack.length > 0) stack.pop()
+    }
+    return s + stack.map((c) => (c === '{' ? '}' : ']')).reverse().join('')
   }
+
+  const candidates: Array<[string, string]> = [
+    ['A (last string-terminated entry)', cutA !== -1 ? partial.slice(0, cutA + 2) + TAIL : ''],
+    ['B (last any-entry close)', cutB !== -1 ? partial.slice(0, cutB + 1) + TAIL : ''],
+    ['C (auto-close brackets)', autoClose(partial)],
+  ]
+
+  for (const [label, candidate] of candidates) {
+    if (!candidate) continue
+    // Remove trailing commas introduced by the cut before trying to parse
+    const normalized = candidate.replace(/,(\s*[}\]])/g, '$1')
+    try {
+      const result = JSON.parse(normalized)
+      console.warn(`[Gemini] Partial recovery succeeded via strategy ${label} with`, result.entries?.length ?? 0, 'entries')
+      return result
+    } catch {
+      // try next strategy
+    }
+  }
+
+  throw new Error(`Truncation recovery failed after all strategies. Raw: ${text.slice(0, 300)}`)
 }
