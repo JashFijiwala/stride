@@ -59,6 +59,8 @@ export async function POST(request: Request) {
       }
     }
 
+    console.log('[goals-context] prompt prefix:', goalsContext ?? 'none')
+
     // ── Layer 1 + 2: Parse with local parser + Gemini ──────────────────────
     const aiResult = await parseJournalEntry(
       raw_text,
