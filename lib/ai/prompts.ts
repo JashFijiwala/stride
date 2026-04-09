@@ -23,7 +23,9 @@ ${lines}
 JSON schema:
 {"entries":[{"original_text":"exact line","category":"sleep|nutrition|exercise|personal-growth|work|entertainment|digital-wellness|discipline|health|social|other","sentiment":"positive|negative|neutral","duration_mins":null,"tags":["tag"]}],"mental_state":{"primary_mood":"word","energy_level":"very_low|low|moderate|high|very_high","stress_level":"very_low|low|moderate|high|very_high","mood_score":5,"emotional_tags":["tag"],"summary":"sentence"},"micro_insight":"sentence","corrections":{"wake_time":null,"sleep_time":null,"weight_kg":null}}
 
-Rules: positive=making bed/bathing/reading/cooking/exercise. negative=very late sleep/excessive screens/skipping meals. entertainment=neutral. micro_insight under 25 words.`
+Rules: positive=making bed/bathing/reading/cooking/exercise. negative=very late sleep/excessive screens/skipping meals. entertainment=neutral. micro_insight under 25 words.
+
+Be concise in all fields. For tags: maximum 2 tags per entry, single words only, no phrases. For original_text: copy it exactly as written, do not expand or paraphrase. Keep the entire response as compact as possible.`
 
   if (futureHabitNames && futureHabitNames.length > 0) {
     prompt += `

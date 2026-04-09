@@ -18,7 +18,7 @@ export async function callGemini(prompt: string): Promise<string> {
   const model = genAI.getGenerativeModel({
     model: MODEL_NAME,
     generationConfig: {
-      maxOutputTokens: 16384,
+      maxOutputTokens: 8192,
       temperature: 0.1,
     },
   })
