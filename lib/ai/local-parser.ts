@@ -3,14 +3,12 @@ import type { LocalParserResult, EntryCategory } from '@/lib/types'
 // ─── Time helpers ─────────────────────────────────────────────────────────────
 
 function parseTimeString(raw: string, isWake = true): string | null {
-  // Normalise spacing and case
   const s = raw.trim().toLowerCase().replace(/\s+/g, '')
 
   let hours = -1
   let mins = 0
   let isPm: boolean | null = null
 
-  // Detect am/pm suffix
   if (s.endsWith('am')) isPm = false
   else if (s.endsWith('pm')) isPm = true
 
@@ -24,32 +22,22 @@ function parseTimeString(raw: string, isWake = true): string | null {
     hours = Number(digits)
     mins = 0
   } else if (digits.length === 3) {
-    // e.g. "815" → 8:15, "130" → 1:30
     hours = Number(digits[0])
     mins = Number(digits.slice(1))
   } else if (digits.length === 4) {
-    // e.g. "0815" → 8:15, "1130" → 11:30
     hours = Number(digits.slice(0, 2))
     mins = Number(digits.slice(2))
   }
 
   if (hours < 0 || hours > 23 || mins < 0 || mins > 59) return null
 
-  // Resolve am/pm
   if (isPm === true && hours < 12) hours += 12
   if (isPm === false && hours === 12) hours = 0
 
-  // Heuristic: if no am/pm given
   if (isPm === null) {
     if (isWake) {
-      // Wake times: 1-11 likely AM, 12+ stays
-      if (hours >= 1 && hours <= 11) {
-        /* keep as-is (morning) */
-      }
+      if (hours >= 1 && hours <= 11) { /* keep as-is */ }
     } else {
-      // Sleep times: 1-6 likely past midnight (next day)
-      // hours 7-11 are unlikely sleep times → force PM
-      // hours 12+ fine
       if (hours >= 7 && hours <= 11) hours += 12
     }
   }
@@ -137,15 +125,13 @@ export function parseDuration(fragment: string): number | null {
 // ─── Line categoriser ─────────────────────────────────────────────────────────
 
 const CATEGORY_KEYWORDS: Array<{ re: RegExp; cat: EntryCategory }> = [
-  { re: /\b(?:read|reading|book|books)\b/i, cat: 'personal-growth' },
-  { re: /\b(?:walk|walking|walked|run|running|ran|jog|gym|exercise|workout|cycling|swim)\b/i, cat: 'exercise' },
+  { re: /\b(?:read|reading|book|books|meditat|yoga|journal|gratitude|therapy|counselor|deep breath)\b/i, cat: 'positive_coping' },
+  { re: /\b(?:walk|walking|walked|run|running|ran|jog|gym|exercise|workout|cycling|swim)\b/i, cat: 'physical_activity' },
   { re: /\b(?:breakfast|lunch|dinner|ate|eat|eating|food|snack|meal|cook|cooked|cooking)\b/i, cat: 'nutrition' },
   { re: /\b(?:sleep|slept|nap|napped|woke|woken|waking|bed|bedtime)\b/i, cat: 'sleep' },
-  { re: /\b(?:screen|phone|scroll|scrolling|social media|instagram|twitter|youtube|tiktok)\b/i, cat: 'digital-wellness' },
-  { re: /\b(?:headache|sick|pain|medicine|migraine|fever|ill|nausea|doctor)\b/i, cat: 'health' },
-  { re: /\b(?:study|studying|dsa|coding|code|work|project|meeting|office|task)\b/i, cat: 'work' },
+  { re: /\b(?:stressed|overwhelmed|anxious|anxiety|panic|burnout|burned out|exhausted|hopeless|helpless|worthless)\b/i, cat: 'stress_signal' },
+  { re: /\b(?:study|studying|dsa|coding|code|work|project|meeting|office|task|assignment|class|college)\b/i, cat: 'academic_work' },
   { re: /\b(?:movie|film|show|series|watched|cricket|poker|gaming|game|played|stream)\b/i, cat: 'entertainment' },
-  { re: /\b(?:meditation|meditate|yoga|journal|pray|prayer|gratitude)\b/i, cat: 'discipline' },
   { re: /\b(?:friend|family|call|chat|met|hangout|party|social)\b/i, cat: 'social' },
 ]
 
@@ -153,7 +139,7 @@ export function categoriseLine(line: string): EntryCategory {
   for (const { re, cat } of CATEGORY_KEYWORDS) {
     if (re.test(line)) return cat
   }
-  return 'other'
+  return 'neutral'
 }
 
 // ─── Meta-line filter ─────────────────────────────────────────────────────────
@@ -167,6 +153,39 @@ export function isMetaLine(line: string): boolean {
   return false
 }
 
+// ─── Wellbeing keyword lists ──────────────────────────────────────────────────
+
+const STRESS_KEYWORDS = [
+  'stressed', 'overwhelmed', 'anxious', 'anxiety', "can't sleep",
+  "can't focus", 'worried', 'worrying', 'exhausted', 'burned out',
+  'burnout', 'lonely', 'hopeless', 'helpless', 'crying', 'cried',
+  'panic', 'panicking', 'pressure', 'dread', 'dreading',
+  'too much', 'breaking down', 'falling apart', 'giving up',
+  'numb', 'empty', 'pointless', 'worthless', 'hate myself',
+]
+
+const POSITIVE_COPING_KEYWORDS = [
+  'exercised', 'worked out', 'walked', 'ran', 'jogged',
+  'meditated', 'meditation', 'journaled', 'read', 'reading',
+  'talked to friend', 'called family', 'cooked', 'slept well',
+  'good sleep', 'deep sleep', 'cleaned', 'organized',
+  'helped someone', 'volunteered', 'gratitude', 'grateful',
+  'therapy', 'counselor', 'deep breath', 'breathed',
+  'spent time outside', 'sunlight', 'fresh air',
+]
+
+const ISOLATION_KEYWORDS = [
+  'alone all day', "didn't talk to anyone", 'no one to talk to',
+  'stayed in room', "didn't go out", 'avoided people',
+  'cancelled plans', 'skipped class', 'skipped college',
+  "didn't leave", 'nobody', 'no friends', 'isolated',
+]
+
+function detectKeywords(text: string, keywords: string[]): string[] {
+  const lower = text.toLowerCase()
+  return keywords.filter((kw) => lower.includes(kw))
+}
+
 // ─── Main parser ──────────────────────────────────────────────────────────────
 
 export function runLocalParser(rawText: string): LocalParserResult {
@@ -175,12 +194,15 @@ export function runLocalParser(rawText: string): LocalParserResult {
     .map((l) => l.trim())
     .filter((l) => l.length > 0)
 
-  // Durations per line
   const durations: Record<string, number> = {}
   for (const line of lines) {
     const d = parseDuration(line)
     if (d) durations[line] = d
   }
+
+  const stress_keywords_found = detectKeywords(rawText, STRESS_KEYWORDS)
+  const positive_coping_found = detectKeywords(rawText, POSITIVE_COPING_KEYWORDS)
+  const isolation_signals_found = detectKeywords(rawText, ISOLATION_KEYWORDS)
 
   return {
     wake_time: extractWakeTime(rawText),
@@ -189,5 +211,11 @@ export function runLocalParser(rawText: string): LocalParserResult {
     self_rating: extractRating(rawText),
     lines: lines.filter((l) => !isMetaLine(l)),
     durations,
+    stress_keywords_found,
+    positive_coping_found,
+    isolation_signals_found,
+    stress_detected: stress_keywords_found.length > 0,
+    positive_coping_detected: positive_coping_found.length > 0,
+    isolation_detected: isolation_signals_found.length > 0,
   }
 }

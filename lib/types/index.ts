@@ -26,17 +26,15 @@ export interface DailyLog {
 }
 
 export type EntryCategory =
+  | 'positive_coping'
+  | 'stress_signal'
   | 'sleep'
-  | 'nutrition'
-  | 'exercise'
-  | 'personal-growth'
-  | 'work'
-  | 'entertainment'
-  | 'digital-wellness'
-  | 'discipline'
-  | 'health'
+  | 'physical_activity'
   | 'social'
-  | 'other'
+  | 'academic_work'
+  | 'nutrition'
+  | 'entertainment'
+  | 'neutral'
 
 export type Sentiment = 'positive' | 'negative' | 'neutral'
 
@@ -206,13 +204,18 @@ export interface MentalStateAI {
 export interface AIParseResult {
   entries: ParsedEntryAI[]
   mental_state: MentalStateAI
-  micro_insight: string
-  corrections: {
+  wellbeing_insight: string
+  corrections?: {
     wake_time: string | null
     sleep_time: string | null
     weight_kg: number | null
   }
   detected_habits?: string[]
+  phq9_signals: PHQ9Signals
+  phq9_estimate: number
+  gad7_signals: GAD7Signals
+  gad7_estimate: number
+  flagged: boolean
 }
 
 export interface LocalParserResult {
@@ -222,6 +225,12 @@ export interface LocalParserResult {
   self_rating: number | null
   lines: string[]
   durations: Record<string, number>
+  stress_keywords_found: string[]
+  positive_coping_found: string[]
+  isolation_signals_found: string[]
+  stress_detected: boolean
+  positive_coping_detected: boolean
+  isolation_detected: boolean
 }
 
 // Component prop types
@@ -235,7 +244,7 @@ export interface ParsedEntryViewProps {
   log: DailyLog
   entries: ParsedEntry[]
   mentalState: MentalState | null
-  microInsight: string | null
+  wellbeingInsight: string | null
   onEdit: () => void
 }
 

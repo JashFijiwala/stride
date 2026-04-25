@@ -1,36 +1,53 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import Groq from 'groq-sdk'
 
-const MODEL_NAME = 'gemini-2.5-flash-lite'
+const MODEL = 'llama-3.3-70b-versatile'
 
-let _genAI: GoogleGenerativeAI | null = null
+let _groq: Groq | null = null
 
-function getGenAI(): GoogleGenerativeAI {
-  if (!_genAI) {
-    const key = process.env.GEMINI_API_KEY
-    if (!key) throw new Error('GEMINI_API_KEY is not set')
-    _genAI = new GoogleGenerativeAI(key)
+function getGroq(): Groq {
+  if (!_groq) {
+    const key = process.env.GROQ_API_KEY
+    if (!key) throw new Error('GROQ_API_KEY is not set')
+    _groq = new Groq({ apiKey: key })
   }
-  return _genAI
+  return _groq
 }
 
 export async function callGemini(prompt: string): Promise<string> {
-  const genAI = getGenAI()
-  const model = genAI.getGenerativeModel({
-    model: MODEL_NAME,
-    generationConfig: {
-      maxOutputTokens: 8192,
-      temperature: 0.1,
-    },
+  const groq = getGroq()
+
+  // Split role preamble into system message; pass the rest as user content.
+  // If the prompt starts with "You are", extract that paragraph as the system prompt.
+  let systemPrompt = 'You are a JSON-only response assistant. Return only valid JSON. No markdown. No extra text.'
+  let userPrompt = prompt
+
+  const roleMatch = prompt.match(/^(You are[\s\S]+?\n\n)/)
+  if (roleMatch) {
+    systemPrompt = roleMatch[1].trim()
+    userPrompt = prompt.slice(roleMatch[1].length)
+  }
+
+  const completion = await groq.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    temperature: 0.1,
+    max_tokens: 8192,
+    response_format: { type: 'json_object' },
   })
 
-  const result = await model.generateContent(prompt)
-  return result.response.text()
+  return completion.choices[0].message.content ?? ''
 }
 
 export function extractJSON(text: string): unknown {
-  console.log('[Gemini raw response]:', text)
+  console.log('[Groq raw response]:', text)
 
-  // Strip markdown code fences
+  // With response_format: json_object, Groq guarantees valid JSON.
+  // These fallbacks remain as a safety net for edge cases.
+
+  // Strip markdown code fences (shouldn't appear, but just in case)
   const stripped = text
     .replace(/^```(?:json)?\s*/i, '')
     .replace(/\s*```\s*$/i, '')
@@ -66,29 +83,26 @@ export function extractJSON(text: string): unknown {
   }
 
   // Attempt 4: truncation recovery — multiple strategies, most to least conservative
-  console.warn('[Gemini] JSON appears truncated, attempting partial recovery')
+  console.warn('[Groq] JSON appears truncated, attempting partial recovery')
   const jsonStart = cleaned.indexOf('{')
   if (jsonStart === -1) {
-    throw new Error(`No JSON found in Gemini response. Raw: ${text.slice(0, 300)}`)
+    throw new Error(`No JSON found in Groq response. Raw: ${text.slice(0, 300)}`)
   }
 
   const partial = cleaned.slice(jsonStart)
 
-  // Defaults appended after the last complete entry to close the structure
-  const TAIL = `],"mental_state":{"primary_mood":"unknown","energy_level":"moderate","stress_level":"moderate","mood_score":5,"emotional_tags":[],"summary":"Analysis was incomplete due to response length."},"micro_insight":"Entry saved. Full analysis was unavailable.","corrections":{"wake_time":null,"sleep_time":null,"weight_kg":null}}`
+  const TAIL = `],"mental_state":{"primary_mood":"unknown","energy_level":"moderate","stress_level":"moderate","mood_score":5,"emotional_tags":[],"summary":"Analysis was incomplete due to response length."},"phq9_signals":{"interest_pleasure":0,"feeling_down":0,"sleep_trouble":0,"tired_energy":0,"appetite":0,"self_worth":0,"concentration":0,"psychomotor":0,"self_harm":0},"phq9_estimate":0,"gad7_signals":{"nervousness":0,"uncontrollable_worry":0,"excessive_worry":0,"trouble_relaxing":0,"restlessness":0,"irritability":0,"afraid":0},"gad7_estimate":0,"wellbeing_insight":"Entry saved. Full analysis was unavailable.","flagged":false}`
 
-  // Strategy A: cut after last `"}` — handles entries ending with a string field
+  // Strategy A: cut after last `"}`
   const cutA = partial.lastIndexOf('"}')
 
-  // Strategy B: cut after last `}` anywhere — handles entries ending with
-  // number, null, or array values (e.g. "duration_mins":30} or "tags":["x"]})
+  // Strategy B: cut after last `}` anywhere
   let cutB = -1
   for (let i = partial.length - 1; i >= 0; i--) {
     if (partial[i] === '}') { cutB = i; break }
   }
 
-  // Strategy C: auto-close by counting unmatched brackets, then parse.
-  // Walks the string tracking open braces/brackets outside of strings.
+  // Strategy C: auto-close by counting unmatched brackets
   function autoClose(s: string): string {
     const stack: string[] = []
     let inStr = false
@@ -112,11 +126,10 @@ export function extractJSON(text: string): unknown {
 
   for (const [label, candidate] of candidates) {
     if (!candidate) continue
-    // Remove trailing commas introduced by the cut before trying to parse
     const normalized = candidate.replace(/,(\s*[}\]])/g, '$1')
     try {
       const result = JSON.parse(normalized)
-      console.warn(`[Gemini] Partial recovery succeeded via strategy ${label} with`, result.entries?.length ?? 0, 'entries')
+      console.warn(`[Groq] Partial recovery succeeded via strategy ${label} with`, result.entries?.length ?? 0, 'entries')
       return result
     } catch {
       // try next strategy

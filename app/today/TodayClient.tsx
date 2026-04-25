@@ -81,7 +81,9 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
   const [log, setLog] = useState<DailyLog | null>(null)
   const [entries, setEntries] = useState<ParsedEntry[]>([])
   const [mentalState, setMentalState] = useState<MentalState | null>(null)
-  const [microInsight, setMicroInsight] = useState<string | null>(null)
+  const [wellbeingInsight, setWellbeingInsight] = useState<string | null>(null)
+  const [flagged, setFlagged] = useState(false)
+  const [crisisDismissed, setCrisisDismissed] = useState(false)
   const [editing, setEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [showNewDayModal, setShowNewDayModal] = useState(false)
@@ -186,7 +188,9 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
     setLog(null)
     setEntries([])
     setMentalState(null)
-    setMicroInsight(null)
+    setWellbeingInsight(null)
+    setFlagged(false)
+    setCrisisDismissed(false)
     setEditing(false)
 
     async function fetchTodayLog() {
@@ -258,7 +262,9 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
     setLog(savedLog)
     setEntries([])
     setMentalState(null)
-    setMicroInsight(null)
+    setWellbeingInsight(null)
+    setFlagged(false)
+    setCrisisDismissed(false)
     setEditing(false)
   }, [])
 
@@ -268,7 +274,9 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
     if (!result) return
     setEntries(result.entries)
     setMentalState(result.mental_state)
-    setMicroInsight(result.micro_insight)
+    setWellbeingInsight(result.wellbeing_insight)
+    setFlagged(result.flagged)
+    setCrisisDismissed(false)
     setLog((prev) => (prev ? { ...prev, ai_parsed: true } : prev))
   }, [log, currentLogDate, analyseEntry])
 
@@ -471,12 +479,61 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
+              className="space-y-4"
             >
+              {/* Crisis resources banner — shown when flagged, dismissible */}
+              <AnimatePresence>
+                {flagged && !crisisDismissed && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-4"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-amber-300">
+                          We noticed some signals in your entry that suggest you might be going through a difficult time. You&apos;re not alone.
+                        </p>
+                        <p className="mt-1 text-xs text-amber-400/80">
+                          Consider reaching out:
+                        </p>
+                        <div className="mt-2 flex flex-col gap-1 text-sm">
+                          <a
+                            href="tel:14416"
+                            className="font-medium text-amber-300 underline underline-offset-2"
+                          >
+                            Tele-MANAS: 14416
+                          </a>
+                          <a
+                            href="tel:9152987821"
+                            className="font-medium text-amber-300 underline underline-offset-2"
+                          >
+                            iCall: 9152987821
+                          </a>
+                          <p className="text-xs text-amber-400/70">
+                            Or speak to your college counselor
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setCrisisDismissed(true)}
+                        className="shrink-0 text-sm text-amber-400/60 hover:text-amber-400"
+                        aria-label="Dismiss"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <ParsedEntryView
                 log={log}
                 entries={entries}
                 mentalState={mentalState}
-                microInsight={microInsight}
+                wellbeingInsight={wellbeingInsight}
                 onEdit={() => setEditing(true)}
               />
             </motion.div>

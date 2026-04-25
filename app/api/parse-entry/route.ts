@@ -102,6 +102,14 @@ export async function POST(request: Request) {
 
     // ── Step 8: Save mental state ───────────────────────────────────────────
     const ms = aiResult.mental_state
+
+    // Double-check: flagged must be true if self_harm > 0 (safety net)
+    const isFlagged =
+      aiResult.flagged ||
+      (aiResult.phq9_signals?.self_harm ?? 0) > 0 ||
+      (aiResult.phq9_estimate ?? 0) >= 15 ||
+      (aiResult.gad7_estimate ?? 0) >= 15
+
     const { data: savedMentalState, error: msError } = await supabase
       .from('mental_states')
       .insert({
@@ -113,6 +121,11 @@ export async function POST(request: Request) {
         mood_score: ms.mood_score,
         emotional_tags: ms.emotional_tags ?? [],
         summary: ms.summary,
+        phq9_signals: aiResult.phq9_signals ?? null,
+        phq9_estimate: aiResult.phq9_estimate ?? null,
+        gad7_signals: aiResult.gad7_signals ?? null,
+        gad7_estimate: aiResult.gad7_estimate ?? null,
+        flagged: isFlagged,
       })
       .select()
       .single()
@@ -146,9 +159,10 @@ export async function POST(request: Request) {
     return NextResponse.json({
       entries: savedEntries ?? entriesToInsert,
       mental_state: savedMentalState ?? null,
-      micro_insight: aiResult.micro_insight,
+      wellbeing_insight: aiResult.wellbeing_insight,
       wake_time: finalWakeTime,
       sleep_time: finalSleepTime,
+      flagged: isFlagged,
     })
   } catch (error) {
     console.error('parse-entry error:', error)

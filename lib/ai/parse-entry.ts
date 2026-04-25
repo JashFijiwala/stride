@@ -12,12 +12,9 @@ export async function parseJournalEntry(rawText: string, futureHabitNames?: stri
   const rawResponse = await callGemini(prompt)
   const parsed = extractJSON(rawResponse) as AIParseResult
 
-  // Apply any corrections from Gemini back on top of local parser
-  if (parsed.corrections) {
-    if (parsed.corrections.wake_time && !localResult.wake_time) {
-      // Gemini found a wake time the local parser missed — no action needed,
-      // the API route will use the AI result directly.
-    }
+  // Enforce flagged = true if self_harm > 0 (safety guarantee, regardless of Gemini output)
+  if (parsed.phq9_signals?.self_harm > 0 && !parsed.flagged) {
+    parsed.flagged = true
   }
 
   return parsed

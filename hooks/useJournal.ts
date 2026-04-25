@@ -16,7 +16,8 @@ export interface SaveEntryInput {
 export interface AnalyseEntryResult {
   entries: ParsedEntry[]
   mental_state: MentalState | null
-  micro_insight: string | null
+  wellbeing_insight: string | null
+  flagged: boolean
 }
 
 export function useJournal() {
@@ -113,7 +114,8 @@ export function useJournal() {
         return {
           entries: data.entries ?? [],
           mental_state: data.mental_state ?? null,
-          micro_insight: data.micro_insight ?? null,
+          wellbeing_insight: data.wellbeing_insight ?? null,
+          flagged: data.flagged === true,
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to analyse entry')

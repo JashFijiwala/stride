@@ -9,7 +9,7 @@ interface ParsedEntryViewProps {
   log: DailyLog
   entries: ParsedEntry[]
   mentalState: MentalState | null
-  microInsight: string | null
+  wellbeingInsight: string | null
   onEdit: () => void
 }
 
@@ -32,17 +32,15 @@ const SENTIMENT_STYLES = {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
+  positive_coping: 'Positive Coping',
+  stress_signal: 'Stress Signal',
   sleep: 'Sleep & Rest',
-  nutrition: 'Nutrition',
-  exercise: 'Physical Activity',
-  'personal-growth': 'Personal Growth',
-  work: 'Academic / Work',
-  entertainment: 'Entertainment',
-  'digital-wellness': 'Digital Wellness',
-  discipline: 'Self-Discipline',
-  health: 'Health',
+  physical_activity: 'Physical Activity',
   social: 'Social',
-  other: 'General',
+  academic_work: 'Academic / Work',
+  nutrition: 'Nutrition',
+  entertainment: 'Entertainment',
+  neutral: 'General',
 }
 
 const ENERGY_LABELS: Record<string, string> = {
@@ -63,7 +61,7 @@ export function ParsedEntryView({
   log,
   entries,
   mentalState,
-  microInsight,
+  wellbeingInsight,
   onEdit,
 }: ParsedEntryViewProps) {
   const positiveEntries = entries.filter((e) => e.sentiment === 'positive')
@@ -144,8 +142,8 @@ export function ParsedEntryView({
         </motion.div>
       )}
 
-      {/* AI micro insight */}
-      {microInsight && <DailyMicroInsight insight={microInsight} />}
+      {/* AI wellbeing insight */}
+      {wellbeingInsight && <DailyMicroInsight insight={wellbeingInsight} />}
 
       {/* Parsed entries */}
       {entries.length > 0 && (

@@ -101,15 +101,15 @@ export async function POST() {
     const rawResponse = await callGemini(prompt)
     const aiResult = extractJSON(rawResponse) as {
       summary: string
-      top_wins: string[]
-      areas_to_watch: string[]
+      positive_coping_observed: string[]
+      stress_triggers: string[]
       correlations: string[]
       suggestion: string
-      avg_mood_trend: string
       encouragement: string
+      avg_mood_trend: string
     }
 
-    // Upsert into weekly_insights
+    // Upsert into weekly_insights (map new AI field names to existing DB columns)
     const upsertData = {
       user_id: user.id,
       week_start: weekStartMonday,
@@ -119,8 +119,8 @@ export async function POST() {
       positive_count: posCount,
       negative_count: negCount,
       neutral_count: neutCount,
-      top_wins: aiResult.top_wins ?? [],
-      areas_to_watch: aiResult.areas_to_watch ?? [],
+      top_wins: aiResult.positive_coping_observed ?? [],
+      areas_to_watch: aiResult.stress_triggers ?? [],
       correlations: aiResult.correlations ?? [],
       suggestion: aiResult.suggestion ?? null,
       summary: aiResult.summary ?? null,
