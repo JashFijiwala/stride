@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation'
 import { PenLine, CalendarDays, BarChart2, Settings } from 'lucide-react'
 
 const tabs = [
-  { href: '/today', label: 'Today', Icon: PenLine },
+  { href: '/today', label: 'Check-in', Icon: PenLine },
   { href: '/history', label: 'History', Icon: CalendarDays },
-  { href: '/insights', label: 'Insights', Icon: BarChart2 },
+  { href: '/insights', label: 'Wellbeing', Icon: BarChart2 },
   { href: '/settings', label: 'Settings', Icon: Settings },
 ]
 
@@ -19,7 +19,7 @@ export function TopNav() {
   return (
     <nav className="hidden border-b border-[#262626] bg-[#0A0A0A]/80 backdrop-blur-lg dark:bg-[#0A0A0A]/80 lg:block">
       <div className="mx-auto flex h-14 max-w-2xl items-center justify-between px-4">
-        <span className="text-lg font-semibold text-[#F1F5F9]">Stride</span>
+        <span className="text-lg font-semibold text-[#F1F5F9]">MindLens</span>
         <div className="flex items-center gap-1">
           {tabs.map(({ href, label, Icon }) => {
             const isActive = pathname === href || pathname.startsWith(href + '/')

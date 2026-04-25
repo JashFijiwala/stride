@@ -5,25 +5,25 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const SCREENS = [
   {
-    emoji: '📓',
-    title: 'Your habits, finally visible',
-    subtitle: 'No forms. No checkboxes. No effort.',
+    emoji: '🧠',
+    title: 'Your mental health, made visible',
+    subtitle: 'No forms. No checkboxes. No pressure.',
     detail:
-      'Just write about your day like you\'re texting yourself. Stride reads it and tracks your habits automatically — no forms, no check-boxes, no effort.',
+      'Just write about your day like you\'re texting yourself. MindLens reads it and tracks your stress, mood, and wellbeing automatically — no clinical jargon, no effort.',
   },
   {
     emoji: '🔍',
-    title: 'Good habits grow. Bad ones shrink.',
-    subtitle: 'AI finds what shapes your best days.',
+    title: 'Understand your stress patterns.',
+    subtitle: 'AI finds what affects your mental health.',
     detail:
-      'Every entry teaches Stride more about your patterns. It finds what makes your best days great — and what quietly pulls your worst days down.',
+      'Every entry teaches MindLens more about your wellbeing. It detects signs of anxiety and low mood early — and shows you the patterns behind your best and hardest days.',
   },
   {
-    emoji: '📈',
-    title: 'Small strides. Big change.',
-    subtitle: 'One small improvement per week.',
+    emoji: '🌱',
+    title: 'Small steps. Real relief.',
+    subtitle: 'Evidence-based coping tools, when you need them.',
     detail:
-      'You don\'t need to overhaul your life overnight. One small improvement per week, compounded over time, is all it takes. Stride keeps you honest — gently.',
+      'MindLens guides you through breathing exercises, CBT reframes, and grounding techniques — one day at a time. Your daily mental health companion.',
   },
 ]
 

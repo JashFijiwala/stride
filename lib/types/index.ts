@@ -19,6 +19,8 @@ export interface DailyLog {
   weight_kg: number | null
   mood_emoji: string | null
   ai_parsed: boolean
+  sleep_hours: number | null
+  energy_level: 'very_low' | 'low' | 'moderate' | 'high' | 'very_high' | null
   created_at: string
   updated_at: string
 }
@@ -53,6 +55,28 @@ export interface ParsedEntry {
 export type EnergyLevel = 'very_low' | 'low' | 'moderate' | 'high' | 'very_high'
 export type StressLevel = 'very_low' | 'low' | 'moderate' | 'high' | 'very_high'
 
+export interface PHQ9Signals {
+  interest_pleasure: number
+  feeling_down: number
+  sleep_trouble: number
+  tired_energy: number
+  appetite: number
+  self_worth: number
+  concentration: number
+  psychomotor: number
+  self_harm: number
+}
+
+export interface GAD7Signals {
+  nervousness: number
+  uncontrollable_worry: number
+  excessive_worry: number
+  trouble_relaxing: number
+  restlessness: number
+  irritability: number
+  afraid: number
+}
+
 export interface MentalState {
   id: string
   daily_log_id: string
@@ -63,6 +87,11 @@ export interface MentalState {
   mood_score: number
   emotional_tags: string[]
   summary: string
+  phq9_signals: PHQ9Signals
+  gad7_signals: GAD7Signals
+  phq9_estimate: number | null
+  gad7_estimate: number | null
+  flagged: boolean
   created_at: string
 }
 
@@ -132,6 +161,27 @@ export interface UserSummary {
   total_days_logged: number
   summary_text: string | null
   updated_at: string
+}
+
+export interface ScreeningResult {
+  id: string
+  user_id: string
+  test_type: 'phq9' | 'gad7'
+  question_scores: Record<string, number>
+  total_score: number
+  severity: 'minimal' | 'mild' | 'moderate' | 'moderately_severe' | 'severe'
+  flagged: boolean
+  created_at: string
+}
+
+export interface CopingSession {
+  id: string
+  user_id: string
+  exercise_type: 'breathing' | 'cbt_reframe' | 'grounding_54321' | 'muscle_relaxation' | 'journaling' | 'mindfulness'
+  completed: boolean
+  duration_seconds: number | null
+  notes: string | null
+  created_at: string
 }
 
 // AI response types

@@ -1,7 +1,7 @@
 {
-  "name": "Stride",
-  "short_name": "Stride",
-  "description": "A habit tracker that works through your daily journal. Write freely — AI tracks your habits automatically.",
+  "name": "MindLens",
+  "short_name": "MindLens",
+  "description": "A student mental health screening and stress management app. Write freely — AI tracks your wellbeing automatically.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0A0A0A",

@@ -29,7 +29,7 @@ function progressLabel(attempts: number): string {
 
 function encouragingMessage(habit: FutureHabit): string {
   const { total_attempts, current_streak } = habit
-  if (total_attempts === 0) return "Log it and Stride will track it automatically"
+  if (total_attempts === 0) return "Log it and MindLens will track it automatically"
   if (current_streak >= 7) return `${current_streak}-day streak — you're on a roll`
   if (total_attempts >= 21) return "This is now part of who you are"
   if (total_attempts >= 14) return "Almost there — just a bit more consistency"
@@ -142,7 +142,7 @@ export function FutureHabitsSection({ userId, habits, onHabitAdded }: FutureHabi
             What habit are you trying to build?
           </p>
           <p className="mt-1 text-xs text-[var(--text-muted)]">
-            Add a habit and Stride will detect it automatically in your journal entries — no tagging needed.
+            Add a habit and MindLens will detect it automatically in your journal entries — no tagging needed.
           </p>
         </div>
       )}

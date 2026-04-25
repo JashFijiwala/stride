@@ -95,7 +95,7 @@ export function GoalsSetup({ userId, onComplete }: GoalsSetupProps) {
           What are you working toward?
         </h1>
         <p className="mt-2 text-sm text-[var(--text-muted)]">
-          Stride uses this to give you more relevant insights. You can change it anytime in Settings.
+          MindLens uses this to give you more relevant wellbeing insights. You can change it anytime in Settings.
         </p>
 
         {/* Q1 — Focus areas */}

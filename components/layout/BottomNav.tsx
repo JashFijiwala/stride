@@ -6,9 +6,9 @@ import { motion } from 'framer-motion'
 import { PenLine, CalendarDays, BarChart2, Settings } from 'lucide-react'
 
 const tabs = [
-  { href: '/today', label: 'Today', Icon: PenLine },
+  { href: '/today', label: 'Check-in', Icon: PenLine },
   { href: '/history', label: 'History', Icon: CalendarDays },
-  { href: '/insights', label: 'Insights', Icon: BarChart2 },
+  { href: '/insights', label: 'Wellbeing', Icon: BarChart2 },
   { href: '/settings', label: 'Settings', Icon: Settings },
 ]
 

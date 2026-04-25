@@ -7,14 +7,14 @@ import { ServiceWorkerRegistration } from '@/components/layout/ServiceWorkerRegi
 import { InstallPrompt } from '@/components/ui/InstallPrompt'
 
 export const metadata: Metadata = {
-  title: 'Stride — Small strides. Big change.',
+  title: 'MindLens — Your daily mental health companion',
   description:
-    'A habit tracker that works through your daily journal. Write about your day in plain English. AI tracks your habits, finds patterns, and suggests one small improvement per week.',
+    'A student mental health screening and stress management app. Write about your day in plain English. AI tracks your wellbeing, detects stress patterns, and guides you with evidence-based coping tools.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Stride',
+    title: 'MindLens',
   },
 }
 

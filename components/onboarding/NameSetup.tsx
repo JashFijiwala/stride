@@ -71,7 +71,7 @@ export function NameSetup({ userId, onComplete, onSkip }: NameSetupProps) {
           What should we call you?
         </h1>
         <p className="mt-2 text-sm text-[var(--text-muted)]">
-          This is how Stride will greet you every day.
+          This is how MindLens will greet you every day.
         </p>
 
         <input

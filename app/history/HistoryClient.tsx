@@ -154,7 +154,7 @@ export function HistoryClient({ initialLogs, allLogDates, userId }: HistoryClien
           </p>
           <p className="text-xs text-[var(--text-muted)]">
             {totalEntries === 0
-              ? 'Start journaling today — even a few lines is enough. Stride will handle the rest.'
+              ? 'Start journaling today — even a few lines is enough. MindLens will handle the rest.'
               : 'Navigate to a month where you have entries.'}
           </p>
         </div>
