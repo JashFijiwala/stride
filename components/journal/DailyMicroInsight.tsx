@@ -19,9 +19,14 @@ export function DailyMicroInsight({ insight }: DailyMicroInsightProps) {
         <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)]/20">
           <Sparkles size={14} className="text-[var(--accent)]" />
         </div>
-        <p className="text-sm leading-relaxed text-[var(--text-primary)]">
-          {insight}
-        </p>
+        <div>
+          <p className="mb-1 text-xs font-semibold text-[var(--accent)]">
+            Your Wellbeing Insight
+          </p>
+          <p className="text-sm leading-relaxed text-[var(--text-primary)]">
+            {insight}
+          </p>
+        </div>
       </div>
     </motion.div>
   )

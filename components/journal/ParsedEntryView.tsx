@@ -31,6 +31,20 @@ const SENTIMENT_STYLES = {
   },
 }
 
+const CATEGORY_LABELS: Record<string, string> = {
+  sleep: 'Sleep & Rest',
+  nutrition: 'Nutrition',
+  exercise: 'Physical Activity',
+  'personal-growth': 'Personal Growth',
+  work: 'Academic / Work',
+  entertainment: 'Entertainment',
+  'digital-wellness': 'Digital Wellness',
+  discipline: 'Self-Discipline',
+  health: 'Health',
+  social: 'Social',
+  other: 'General',
+}
+
 const ENERGY_LABELS: Record<string, string> = {
   very_low: 'very low',
   low: 'low',
@@ -140,15 +154,15 @@ export function ParsedEntryView({
             <div className="mb-1 flex items-center gap-4 text-xs text-[var(--text-muted)]">
               <span className="flex items-center gap-1">
                 <span className="h-2 w-2 rounded-full bg-[var(--positive)]" />
-                {positiveEntries.length} positive
+                {positiveEntries.length} Positive coping
               </span>
               <span className="flex items-center gap-1">
                 <span className="h-2 w-2 rounded-full bg-[var(--negative)]" />
-                {negativeEntries.length} negative
+                {negativeEntries.length} Stress signal
               </span>
               <span className="flex items-center gap-1">
                 <span className="h-2 w-2 rounded-full bg-[var(--text-muted)]" />
-                {neutralEntries.length} neutral
+                {neutralEntries.length} Neutral
               </span>
             </div>
           </div>
@@ -179,7 +193,7 @@ export function ParsedEntryView({
                     )}
                   </div>
                   <span className="shrink-0 rounded-full bg-[var(--card-elevated)] px-2 py-0.5 text-[9px] font-medium text-[var(--text-muted)]">
-                    {entry.category}
+                    {CATEGORY_LABELS[entry.category] ?? entry.category}
                   </span>
                 </motion.div>
               )

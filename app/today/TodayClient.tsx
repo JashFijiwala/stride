@@ -448,10 +448,10 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
                 {analysing ? (
                   <span className="flex items-center justify-center gap-2">
                     <Loader2 size={18} className="animate-spin" />
-                    Stride is reading your day…
+                    Analysing your wellbeing…
                   </span>
                 ) : (
-                  '✨ Analyse My Day'
+                  '✨ Analyse My Wellbeing'
                 )}
               </motion.button>
 

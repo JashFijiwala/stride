@@ -4,17 +4,36 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Loader2, WifiOff } from 'lucide-react'
 import { RatingSlider, getMoodEmojiFromRating } from './RatingSlider'
-import { WeightInput } from './WeightInput'
+import { MoodSelector } from './MoodSelector'
 import { useJournal } from '@/hooks/useJournal'
-import type { DailyLog } from '@/lib/types'
+import type { DailyLog, EnergyLevel } from '@/lib/types'
 
 const OFFLINE_KEY = 'stride_pending_entry'
+
+const SLEEP_OPTIONS: { label: string; value: number }[] = [
+  { label: '4h', value: 4 },
+  { label: '5h', value: 5 },
+  { label: '6h', value: 6 },
+  { label: '7h', value: 7 },
+  { label: '8h', value: 8 },
+  { label: '9h', value: 9 },
+  { label: '9h+', value: 10 },
+]
+
+const ENERGY_OPTIONS: { label: string; value: EnergyLevel }[] = [
+  { label: 'Very Low', value: 'very_low' },
+  { label: 'Low', value: 'low' },
+  { label: 'Moderate', value: 'moderate' },
+  { label: 'High', value: 'high' },
+  { label: 'Very High', value: 'very_high' },
+]
 
 interface PendingEntry {
   raw_text: string
   self_rating: number | null
   mood_emoji: string | null
-  weight_kg: number | null
+  sleep_hours: number | null
+  energy_level: EnergyLevel | null
   log_date: string
   saved_at: string
 }
@@ -31,8 +50,10 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
 
   const [text, setText] = useState(existingLog?.raw_text ?? '')
   const [rating, setRating] = useState<number>(existingLog?.self_rating ?? 5)
-  const [weight, setWeight] = useState(
-    existingLog?.weight_kg ? String(existingLog.weight_kg) : ''
+  const [moodEmoji, setMoodEmoji] = useState<string | null>(existingLog?.mood_emoji ?? null)
+  const [sleepHours, setSleepHours] = useState<number | null>(existingLog?.sleep_hours ?? null)
+  const [energyLevel, setEnergyLevel] = useState<EnergyLevel | null>(
+    (existingLog?.energy_level as EnergyLevel) ?? null
   )
   const [saved, setSaved] = useState(false)
   const [isOffline, setIsOffline] = useState(false)
@@ -62,7 +83,9 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
       if (pending.log_date === logDate) {
         setText(pending.raw_text)
         setRating(pending.self_rating ?? 5)
-        setWeight(pending.weight_kg ? String(pending.weight_kg) : '')
+        setMoodEmoji(pending.mood_emoji ?? null)
+        setSleepHours(pending.sleep_hours ?? null)
+        setEnergyLevel(pending.energy_level ?? null)
         setPendingRestored(true)
       }
     } catch {
@@ -83,8 +106,9 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
     const entryData = {
       raw_text: text.trim(),
       self_rating: rating,
-      mood_emoji: getMoodEmojiFromRating(rating),
-      weight_kg: weight ? parseFloat(weight) : null,
+      mood_emoji: moodEmoji ?? getMoodEmojiFromRating(rating),
+      sleep_hours: sleepHours,
+      energy_level: energyLevel,
       log_date: logDate,
     }
 
@@ -107,7 +131,7 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
     setSaved(true)
     await new Promise((r) => setTimeout(r, 600))
     onSaved(log)
-  }, [text, rating, weight, logDate, saveEntry, onSaved])
+  }, [text, rating, moodEmoji, sleepHours, energyLevel, logDate, saveEntry, onSaved])
 
   return (
     <div className="space-y-5">
@@ -154,27 +178,73 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
         )}
       </AnimatePresence>
 
-      {/* Weight */}
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 py-3">
-        <WeightInput value={weight} onChange={setWeight} />
+      {/* 1 — Overall feeling / rating */}
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
+        <RatingSlider value={rating} onChange={setRating} />
       </div>
 
-      {/* Text area */}
+      {/* 2 — Mood emoji selector */}
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
+        <MoodSelector value={moodEmoji} onChange={setMoodEmoji} />
+      </div>
+
+      {/* 3 — Sleep hours */}
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
+        <p className="mb-3 text-sm font-medium text-[var(--text-secondary)]">
+          How many hours did you sleep?
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {SLEEP_OPTIONS.map(({ label, value }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setSleepHours(sleepHours === value ? null : value)}
+              className={`rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                sleepHours === value
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'bg-[var(--card-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 4 — Energy level */}
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
+        <p className="mb-3 text-sm font-medium text-[var(--text-secondary)]">
+          Energy level today?
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {ENERGY_OPTIONS.map(({ label, value }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setEnergyLevel(energyLevel === value ? null : value)}
+              className={`rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                energyLevel === value
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'bg-[var(--card-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 5 — Journal text area */}
       <div className="relative rounded-2xl border border-[var(--border)] bg-[var(--card)] transition-colors focus-within:border-[var(--accent)]/50">
         <textarea
           ref={textareaRef}
           value={text}
           onChange={handleInput}
-          placeholder={`How was your day? Write anything…\n\nThere's no right way to do this. Just write like you're texting yourself.`}
+          placeholder={`How was your day? What's been on your mind?\n\nWrite freely — no structure needed.`}
           rows={8}
           className="w-full resize-none rounded-2xl bg-transparent px-5 py-4 text-base leading-relaxed text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none"
           style={{ minHeight: 200 }}
         />
-      </div>
-
-      {/* Rating */}
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
-        <RatingSlider value={rating} onChange={setRating} />
       </div>
 
       {/* Error */}

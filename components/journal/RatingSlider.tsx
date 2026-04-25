@@ -28,7 +28,7 @@ export function RatingSlider({ value, onChange }: RatingSliderProps) {
   return (
     <div>
       <p className="mb-4 text-sm font-medium text-[var(--text-secondary)]">
-        How would you rate today?
+        How are you feeling overall?
       </p>
       <div className="flex items-center gap-4">
         {/* Emoji — key is the bracket emoji, so AnimatePresence only fires on bracket change */}

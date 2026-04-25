@@ -2,13 +2,14 @@
 
 import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { DailyLog, ParsedEntry, MentalState } from '@/lib/types'
+import type { DailyLog, ParsedEntry, MentalState, EnergyLevel } from '@/lib/types'
 
 export interface SaveEntryInput {
   raw_text: string
   self_rating: number | null
   mood_emoji: string | null
-  weight_kg: number | null
+  sleep_hours: number | null
+  energy_level: EnergyLevel | null
   log_date: string
 }
 
@@ -48,7 +49,8 @@ export function useJournal() {
             raw_text: input.raw_text,
             self_rating: input.self_rating,
             mood_emoji: input.mood_emoji,
-            weight_kg: input.weight_kg,
+            sleep_hours: input.sleep_hours,
+            energy_level: input.energy_level,
             ai_parsed: false,
             updated_at: new Date().toISOString(),
           })
@@ -73,7 +75,8 @@ export function useJournal() {
             raw_text: input.raw_text,
             self_rating: input.self_rating,
             mood_emoji: input.mood_emoji,
-            weight_kg: input.weight_kg,
+            sleep_hours: input.sleep_hours,
+            energy_level: input.energy_level,
             ai_parsed: false,
           })
           .select()
