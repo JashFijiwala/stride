@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { format, addDays, parseISO } from 'date-fns'
-import { Pencil, Loader2 } from 'lucide-react'
+import { Pencil, Loader2, ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useStore } from '@/lib/store/useStore'
@@ -536,6 +536,22 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
                 wellbeingInsight={wellbeingInsight}
                 onEdit={() => setEditing(true)}
               />
+
+              {/* Need support card — only visible in State 3 */}
+              <button
+                onClick={() => router.push('/coping')}
+                className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-indigo-500/30 bg-indigo-950/40 p-4 text-left transition-colors hover:border-indigo-400/50"
+              >
+                <div>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">
+                    Need support right now?
+                  </p>
+                  <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                    Try a guided coping exercise
+                  </p>
+                </div>
+                <ArrowRight size={16} className="shrink-0 text-[var(--text-muted)]" />
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
