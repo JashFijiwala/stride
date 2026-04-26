@@ -20,7 +20,7 @@ export function TopNav() {
   return (
     <nav className="hidden border-b border-[#262626] bg-[#0A0A0A]/80 backdrop-blur-lg dark:bg-[#0A0A0A]/80 lg:block">
       <div className="mx-auto flex h-14 max-w-2xl items-center justify-between px-4">
-        <span className="text-lg font-semibold text-[#F1F5F9]">MindLens</span>
+        <span className="text-lg font-semibold text-[#F1F5F9]">Haven</span>
         <div className="flex items-center gap-1">
           {tabs.map(({ href, label, Icon }) => {
             const isActive = pathname === href || pathname.startsWith(href + '/')

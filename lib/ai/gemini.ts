@@ -1,20 +1,20 @@
-import Groq from 'groq-sdk'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const MODEL = 'llama-3.3-70b-versatile'
+const MODEL = 'gemini-2.0-flash'
 
-let _groq: Groq | null = null
+let _genAI: GoogleGenerativeAI | null = null
 
-function getGroq(): Groq {
-  if (!_groq) {
-    const key = process.env.GROQ_API_KEY
-    if (!key) throw new Error('GROQ_API_KEY is not set')
-    _groq = new Groq({ apiKey: key })
+function getGenAI(): GoogleGenerativeAI {
+  if (!_genAI) {
+    const key = process.env.GEMINI_API_KEY
+    if (!key) throw new Error('GEMINI_API_KEY is not set')
+    _genAI = new GoogleGenerativeAI(key)
   }
-  return _groq
+  return _genAI
 }
 
 export async function callGemini(prompt: string): Promise<string> {
-  const groq = getGroq()
+  const genAI = getGenAI()
 
   // Split role preamble into system message; pass the rest as user content.
   // If the prompt starts with "You are", extract that paragraph as the system prompt.
@@ -27,25 +27,20 @@ export async function callGemini(prompt: string): Promise<string> {
     userPrompt = prompt.slice(roleMatch[1].length)
   }
 
-  const completion = await groq.chat.completions.create({
+  // Append JSON enforcement instruction (replaces response_format: json_object)
+  systemPrompt += '\n\nReturn only valid JSON, no markdown, no preamble.'
+
+  const model = genAI.getGenerativeModel({
     model: MODEL,
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt },
-    ],
-    temperature: 0.1,
-    max_tokens: 8192,
-    response_format: { type: 'json_object' },
+    systemInstruction: systemPrompt,
   })
 
-  return completion.choices[0].message.content ?? ''
+  const result = await model.generateContent(userPrompt)
+  return result.response.text()
 }
 
 export function extractJSON(text: string): unknown {
-  console.log('[Groq raw response]:', text)
-
-  // With response_format: json_object, Groq guarantees valid JSON.
-  // These fallbacks remain as a safety net for edge cases.
+  console.log('[Gemini raw response]:', text)
 
   // Strip markdown code fences (shouldn't appear, but just in case)
   const stripped = text
@@ -83,10 +78,10 @@ export function extractJSON(text: string): unknown {
   }
 
   // Attempt 4: truncation recovery — multiple strategies, most to least conservative
-  console.warn('[Groq] JSON appears truncated, attempting partial recovery')
+  console.warn('[Gemini] JSON appears truncated, attempting partial recovery')
   const jsonStart = cleaned.indexOf('{')
   if (jsonStart === -1) {
-    throw new Error(`No JSON found in Groq response. Raw: ${text.slice(0, 300)}`)
+    throw new Error(`No JSON found in Gemini response. Raw: ${text.slice(0, 300)}`)
   }
 
   const partial = cleaned.slice(jsonStart)
@@ -129,7 +124,7 @@ export function extractJSON(text: string): unknown {
     const normalized = candidate.replace(/,(\s*[}\]])/g, '$1')
     try {
       const result = JSON.parse(normalized)
-      console.warn(`[Groq] Partial recovery succeeded via strategy ${label} with`, result.entries?.length ?? 0, 'entries')
+      console.warn(`[Gemini] Partial recovery succeeded via strategy ${label} with`, result.entries?.length ?? 0, 'entries')
       return result
     } catch {
       // try next strategy
