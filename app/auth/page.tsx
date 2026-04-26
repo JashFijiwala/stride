@@ -37,9 +37,9 @@ export default function AuthPage() {
           <div className="mb-3 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[#818CF8]/15">
             <span className="text-3xl font-bold text-[#818CF8]">S</span>
           </div>
-          <h1 className="text-2xl font-semibold text-[var(--text-primary)]">MindLens</h1>
+          <h1 className="text-2xl font-semibold text-[var(--text-primary)]">Haven</h1>
           <p className="mt-1 text-sm text-[var(--text-muted)]">
-            Your daily mental health companion
+            Your safe space to breathe
           </p>
         </div>
 

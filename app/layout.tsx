@@ -8,14 +8,14 @@ import { InstallPrompt } from '@/components/ui/InstallPrompt'
 import { CrisisModalWrapper } from '@/components/crisis/CrisisModalWrapper'
 
 export const metadata: Metadata = {
-  title: 'MindLens — Your daily mental health companion',
+  title: 'Haven — Your safe space to breathe',
   description:
     'A student mental health screening and stress management app. Write about your day in plain English. AI tracks your wellbeing, detects stress patterns, and guides you with evidence-based coping tools.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'MindLens',
+    title: 'Haven',
   },
 }
 

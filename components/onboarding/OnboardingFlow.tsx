@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 const SCREENS = [
   {
     emoji: '🧠',
-    title: 'Welcome to MindLens',
+    title: 'Welcome to Haven',
     detail:
       'Your daily mental health companion. Check in with yourself, understand your patterns, and find support when you need it.',
     buttonText: 'Get Started',
@@ -29,7 +29,7 @@ const SCREENS = [
     detail:
       'Your journal entries and screening results are completely private. We never share your data with anyone — not your college, not third parties. You can export or delete everything at any time.',
     disclaimer:
-      'MindLens is a screening tool, not a diagnosis. Always consult a professional for clinical advice.',
+      'Haven is a screening tool, not a diagnosis. Always consult a professional for clinical advice.',
     buttonText: 'Start your journey',
   },
 ]

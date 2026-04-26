@@ -1,4 +1,4 @@
-# 🧠 MindLens
+# 🧠 Haven
 ### Your daily mental health companion for Indian college students
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.2-black)](https://nextjs.org)
@@ -25,13 +25,13 @@ India is facing a silent mental health crisis among college students — and the
 
 The barriers are real: stigma, cost, logistics, and a simple lack of awareness. Most students don't know they're struggling until they're in crisis. By then, it's often too late.
 
-**MindLens bridges this gap** — not by replacing professional care, but by helping students understand their own mental health patterns before they reach crisis point.
+**Haven bridges this gap** — not by replacing professional care, but by helping students understand their own mental health patterns before they reach crisis point.
 
 ---
 
 ## The Solution
 
-MindLens is an AI-powered student mental health screening and stress management Progressive Web App (PWA). It does three things:
+Haven is an AI-powered student mental health screening and stress management Progressive Web App (PWA). It does three things:
 
 **1. Screen** — Detect early warning signs through daily AI-powered journal analysis and formal PHQ-9/GAD-7 clinical screening tools.
 
@@ -47,7 +47,7 @@ MindLens is an AI-powered student mental health screening and stress management 
 - Target 3.4: Promote mental health and well-being
 - Target 3.8: Achieve universal health coverage including access to quality mental health services
 
-MindLens directly addresses the 84.5% treatment gap by making mental health awareness accessible, private, and free — on any device, from any location.
+Haven directly addresses the 84.5% treatment gap by making mental health awareness accessible, private, and free — on any device, from any location.
 
 ---
 
@@ -264,7 +264,7 @@ Add all environment variables in Vercel dashboard → Settings → Environment V
 
 ## Disclaimer
 
-MindLens is a mental health screening and wellbeing tracking tool. It is **not** a diagnostic tool, not a therapeutic service, and not a replacement for professional mental health care. The PHQ-9 and GAD-7 are validated screening instruments used for awareness purposes only. If you are in crisis, please contact Tele-MANAS at **14416** (free, 24/7) or emergency services at **112**.
+Haven is a mental health screening and wellbeing tracking tool. It is **not** a diagnostic tool, not a therapeutic service, and not a replacement for professional mental health care. The PHQ-9 and GAD-7 are validated screening instruments used for awareness purposes only. If you are in crisis, please contact Tele-MANAS at **14416** (free, 24/7) or emergency services at **112**.
 
 ---
 

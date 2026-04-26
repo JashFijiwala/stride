@@ -42,7 +42,7 @@ export function InstallPrompt() {
             <X size={13} />
           </button>
           <p className="pr-6 text-sm font-semibold text-[var(--text-primary)]">
-            Add MindLens to your Home Screen
+            Add Haven to your Home Screen
           </p>
           <p className="mt-1 text-xs leading-relaxed text-[var(--text-muted)]">
             Tap the{' '}

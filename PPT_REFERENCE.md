@@ -1,4 +1,4 @@
-# MindLens — PPT Reference Document
+# Haven — PPT Reference Document
 ## GDG Solution Challenge 2026 | Open Innovation | SDG 3
 
 > Use this document slide by slide to build your deck.
@@ -9,10 +9,10 @@
 
 ## SLIDE 1 — Title Slide
 
-**Headline:** MindLens 🧠
+**Headline:** Haven 🧠
 **Subline:** AI-powered mental health screening for Indian college students
 **Bottom:** GDG Solution Challenge 2026 · Open Innovation · SDG 3: Good Health & Well-Being
-**Visual idea:** Dark background, soft indigo glow, the MindLens logo/name centered. Clean and minimal.
+**Visual idea:** Dark background, soft indigo glow, the Haven logo/name centered. Clean and minimal.
 
 ---
 
@@ -55,9 +55,9 @@ Without any screening, students normalize their distress. By the time they seek 
 
 ---
 
-## SLIDE 4 — Introducing MindLens
+## SLIDE 4 — Introducing Haven
 
-**Headline:** MindLens — Screen. Track. Support.
+**Headline:** Haven — Screen. Track. Support.
 
 **One line:** A free, private, AI-powered mental health companion built specifically for Indian college students.
 
@@ -149,7 +149,7 @@ Generalized Anxiety Disorder Scale-7
 → Same severity categories
 
 **Bottom note:**
-"MindLens uses these instruments for SCREENING, not diagnosis. All results are accompanied by disclaimers and professional referrals where appropriate. The AI extracts SOFT SIGNALS from journal text as a supplementary layer — never as a replacement for formal assessment."
+"Haven uses these instruments for SCREENING, not diagnosis. All results are accompanied by disclaimers and professional referrals where appropriate. The AI extracts SOFT SIGNALS from journal text as a supplementary layer — never as a replacement for formal assessment."
 
 **What to say:**
 "We didn't invent the science. We made it accessible. PHQ-9 and GAD-7 are the same tools that psychiatrists use. We put them in a student's pocket, for free."
@@ -180,7 +180,7 @@ Show a simple chart — avg mood score day 1 vs day 7.
 
 ## SLIDE 9 — Roadmap & Scale
 
-**Headline:** Where MindLens goes next
+**Headline:** Where Haven goes next
 
 **Short-term (next 3 months):**
 - Multilingual support — Hindi, Gujarati, Tamil (Google Translate API)
@@ -203,7 +203,7 @@ Show a simple chart — avg mood score day 1 vs day 7.
 
 ## SLIDE 10 — Close
 
-**Headline:** "35 students die every day. MindLens exists so they get help before that point."
+**Headline:** "35 students die every day. Haven exists so they get help before that point."
 
 **Three lines:**
 - Free. Private. Built for India.
@@ -216,7 +216,7 @@ Tele-MANAS: 14416 · iCall: 9152987821 · Emergency: 112
 **Team names**
 
 **What to say:**
-"Mental health is not a luxury. It's a prerequisite for learning. MindLens gives every Indian college student — regardless of where they are or how much they earn — a way to understand themselves, get support, and find help. Thank you."
+"Mental health is not a luxury. It's a prerequisite for learning. Haven gives every Indian college student — regardless of where they are or how much they earn — a way to understand themselves, get support, and find help. Thank you."
 
 ---
 

@@ -1,7 +1,7 @@
 {
-  "name": "MindLens",
-  "short_name": "MindLens",
-  "description": "A student mental health screening and stress management app. Write freely — AI tracks your wellbeing automatically.",
+  "name": "Haven",
+  "short_name": "Haven",
+  "description": "Your safe space to breathe. A free, private mental health companion for Indian college students — screen, track, and find support.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0A0A0A",
