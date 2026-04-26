@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { subDays, format, differenceInDays, parseISO } from 'date-fns'
 
-const SYSTEM_PROMPT = `You are a behavioral pattern analyst for a habit tracking app called Stride. You will receive structured data from a user's daily journal entries spanning multiple weeks.
+const SYSTEM_PROMPT = `You are a behavioral pattern analyst for a mental health companion app called MindLens. You will receive structured data from a user's daily journal entries spanning multiple weeks.
 
 Your job is to find GENUINE recurring behavioral patterns — sequences that repeat across multiple days, not single-day observations.
 

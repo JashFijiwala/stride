@@ -56,14 +56,14 @@ Be conservative: assume 0 for any item unless there is clear, direct textual evi
 Each item is scored 0-3. Only use 2 or 3 for strong, repeated, or explicit signals.
 - phq9_estimate = sum of all 9 phq9_signals values (range 0-27)
 - gad7_estimate = sum of all 7 gad7_signals values (range 0-21)
-- self_harm: ANY mention of self-harm, suicide, suicidal thoughts, or wanting to hurt oneself → set to at least 1
+- self_harm: 0-3 — Set to 1 or higher if the text contains ANY of these signals: thoughts of not wanting to exist, not wanting to be here, wishing to disappear, feeling like a burden to others, hopelessness about the future combined with worthlessness, passive death ideation, or any direct mention of self-harm or suicide. 'Don't want to be here', 'wish I wasn't here', 'everyone would be better without me', 'don't see the point of going on' — all of these must score at least 1. Be conservative but do not miss these signals.
 
 flagged rules (CRITICAL):
-flagged = true if ANY of the following:
-1. self_harm phq9_signal > 0
-2. phq9_estimate >= 15
-3. gad7_estimate >= 15
-4. The journal text contains any direct mention of self-harm, suicide, or hurting oneself
+flagged = true if ANY of these are met:
+- self_harm phq9_signal > 0
+- phq9_estimate >= 15
+- gad7_estimate >= 15
+- Text contains: 'don't want to be here', 'wish I wasn't here', 'not want to exist', 'end it', 'disappear', 'burden to others', 'better off without me', 'no point going on', 'hopeless' AND 'worthless' appearing together in the same entry
 There are NO exceptions to this rule.
 
 wellbeing_insight: 1-2 warm, empathetic, observational sentences. Reflect what you notice about their emotional state today. DO NOT give advice. Never say "You should...", "Try to...", "You have...". Example: "It sounds like today carried a lot of weight — between academic pressure and disrupted sleep, your mind has been working overtime."

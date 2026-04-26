@@ -6,24 +6,31 @@ import { motion, AnimatePresence } from 'framer-motion'
 const SCREENS = [
   {
     emoji: '🧠',
-    title: 'Your mental health, made visible',
-    subtitle: 'No forms. No checkboxes. No pressure.',
+    title: 'Welcome to MindLens',
     detail:
-      'Just write about your day like you\'re texting yourself. MindLens reads it and tracks your stress, mood, and wellbeing automatically — no clinical jargon, no effort.',
+      'Your daily mental health companion. Check in with yourself, understand your patterns, and find support when you need it.',
+    buttonText: 'Get Started',
   },
   {
-    emoji: '🔍',
-    title: 'Understand your stress patterns.',
-    subtitle: 'AI finds what affects your mental health.',
-    detail:
-      'Every entry teaches MindLens more about your wellbeing. It detects signs of anxiety and low mood early — and shows you the patterns behind your best and hardest days.',
+    emoji: '✨',
+    title: 'How it works',
+    steps: [
+      '📝 Daily check-in — takes under 2 minutes',
+      '🤖 AI analyses your wellbeing patterns',
+      '📊 Track mood, stress, and sleep over time',
+      '🫁 Access coping exercises anytime',
+      '🆘 Get connected to help when you need it',
+    ],
+    buttonText: 'Next',
   },
   {
-    emoji: '🌱',
-    title: 'Small steps. Real relief.',
-    subtitle: 'Evidence-based coping tools, when you need them.',
+    emoji: '🔒',
+    title: 'Your privacy matters',
     detail:
-      'MindLens guides you through breathing exercises, CBT reframes, and grounding techniques — one day at a time. Your daily mental health companion.',
+      'Your journal entries and screening results are completely private. We never share your data with anyone — not your college, not third parties. You can export or delete everything at any time.',
+    disclaimer:
+      'MindLens is a screening tool, not a diagnosis. Always consult a professional for clinical advice.',
+    buttonText: 'Start your journey',
   },
 ]
 
@@ -75,12 +82,25 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
             <h1 className="text-2xl font-semibold text-[var(--text-primary)]">
               {screen.title}
             </h1>
-            <p className="mt-2 text-base font-medium text-[var(--accent)]">
-              {screen.subtitle}
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted)]">
-              {screen.detail}
-            </p>
+            {'detail' in screen && (
+              <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted)]">
+                {screen.detail}
+              </p>
+            )}
+            {'steps' in screen && (
+              <ul className="mt-4 space-y-2 text-left">
+                {screen.steps!.map((item) => (
+                  <li key={item} className="text-sm leading-relaxed text-[var(--text-muted)]">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {'disclaimer' in screen && screen.disclaimer && (
+              <p className="mt-4 text-xs leading-relaxed text-[var(--text-muted)]/70">
+                {screen.disclaimer}
+              </p>
+            )}
           </motion.div>
         </AnimatePresence>
 
@@ -105,7 +125,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           whileTap={{ scale: 0.97 }}
           className="mt-8 w-full rounded-2xl bg-[var(--accent)] py-4 text-base font-semibold text-white transition-opacity hover:opacity-90"
         >
-          {step < SCREENS.length - 1 ? 'Next' : 'Get Started'}
+          {screen.buttonText}
         </motion.button>
 
         {/* Skip */}

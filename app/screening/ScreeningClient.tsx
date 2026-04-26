@@ -6,6 +6,7 @@ import { ArrowLeft, ChevronDown, ChevronUp, ClipboardList } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { format, parseISO } from 'date-fns'
 import { createClient } from '@/lib/supabase/client'
+import { useStore } from '@/lib/store/useStore'
 import type { ScreeningResult } from '@/lib/types'
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -205,6 +206,7 @@ interface ScreeningClientProps {
 
 export function ScreeningClient({ userId }: ScreeningClientProps) {
   const router = useRouter()
+  const { showCrisis } = useStore()
 
   // View state
   const [view, setView] = useState<View>('selector')
@@ -280,6 +282,7 @@ export function ScreeningClient({ userId }: ScreeningClientProps) {
       setResultsSaved(true)
       setShowToast(true)
       setTimeout(() => setShowToast(false), 3000)
+      if (flagged) showCrisis()
     }
 
     save().catch(console.error)

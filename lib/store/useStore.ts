@@ -16,4 +16,8 @@ export const useStore = create<AppState>((set) => ({
 
   todayMentalState: null,
   setTodayMentalState: (state) => set({ todayMentalState: state }),
+
+  crisisVisible: false,
+  showCrisis: () => set({ crisisVisible: true }),
+  hideCrisis: () => set({ crisisVisible: false }),
 }))

@@ -5,6 +5,7 @@ import { BottomNav } from '@/components/layout/BottomNav'
 import { TopNav } from '@/components/layout/TopNav'
 import { ServiceWorkerRegistration } from '@/components/layout/ServiceWorkerRegistration'
 import { InstallPrompt } from '@/components/ui/InstallPrompt'
+import { CrisisModalWrapper } from '@/components/crisis/CrisisModalWrapper'
 
 export const metadata: Metadata = {
   title: 'MindLens — Your daily mental health companion',
@@ -40,6 +41,7 @@ export default function RootLayout({
         <Providers>
           <ServiceWorkerRegistration />
           <InstallPrompt />
+          <CrisisModalWrapper />
           <TopNav />
           <main className="min-h-screen pb-16 lg:pb-0">
             {children}

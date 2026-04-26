@@ -30,13 +30,24 @@ interface TodayClientProps {
 type OnboardingStep = 'idle' | 'name' | 'goals' | 'onboarding'
 
 function getGreeting(name: string): string {
-  const hour = new Date().getHours()
-  let timeGreeting: string
-  if (hour >= 5 && hour < 12) timeGreeting = 'Good morning'
-  else if (hour >= 12 && hour < 17) timeGreeting = 'Good afternoon'
-  else if (hour >= 17 && hour < 21) timeGreeting = 'Good evening'
-  else timeGreeting = 'Good night'
-  return `${timeGreeting}, ${name}`
+  const now = new Date()
+  const hour = now.getHours()
+  const day = now.getDay() // 0 = Sunday, 6 = Saturday
+  const isWeekend = day === 0 || day === 6
+  const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const dayName = DAY_NAMES[day]
+
+  if (hour >= 0 && hour <= 3) return `Burning midnight oil, ${name} 🔥`
+  if (hour === 4)              return `Can't sleep, ${name}? 🌙`
+  if (hour >= 5 && hour <= 8) return `Early bird, ${name} 🌅`
+  if (hour >= 9 && hour <= 11)
+    return isWeekend ? `Happy ${dayName}, ${name} ☀️` : `Good morning, ${name} 👋`
+  if (hour >= 12 && hour <= 13) return `Lunch break, ${name}? 🍽️`
+  if (hour >= 14 && hour <= 16)
+    return isWeekend ? `Happy ${dayName}, ${name} ☀️` : `Good afternoon, ${name}`
+  if (hour >= 17 && hour <= 18) return `End of day, ${name} 🌇`
+  if (hour >= 19 && hour <= 21) return `Evening, ${name} 🌙`
+  return `Working late, ${name}? 💻` // 22-23
 }
 
 /** Returns true if the name looks auto-generated from an email (e.g. "jashfiji14") */
@@ -54,7 +65,7 @@ function getRatingColor(v: number): string {
 export function TodayClient({ userId, currentLogDate, profileName, email, nameSet, goalsSet, onboardingComplete }: TodayClientProps) {
   const router = useRouter()
   const { analyseEntry, analysing, error: analyseError } = useJournal()
-  const { currentName, setCurrentName } = useStore()
+  const { currentName, setCurrentName, showCrisis } = useStore()
 
   // Seed the store from the server-fetched profile name on every mount.
   // profileName comes from profiles.name — always prefer it over anything
@@ -82,8 +93,6 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
   const [entries, setEntries] = useState<ParsedEntry[]>([])
   const [mentalState, setMentalState] = useState<MentalState | null>(null)
   const [wellbeingInsight, setWellbeingInsight] = useState<string | null>(null)
-  const [flagged, setFlagged] = useState(false)
-  const [crisisDismissed, setCrisisDismissed] = useState(false)
   const [editing, setEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [showNewDayModal, setShowNewDayModal] = useState(false)
@@ -189,8 +198,6 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
     setEntries([])
     setMentalState(null)
     setWellbeingInsight(null)
-    setFlagged(false)
-    setCrisisDismissed(false)
     setEditing(false)
 
     async function fetchTodayLog() {
@@ -263,20 +270,18 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
     setEntries([])
     setMentalState(null)
     setWellbeingInsight(null)
-    setFlagged(false)
-    setCrisisDismissed(false)
     setEditing(false)
   }, [])
 
   const handleAnalyse = useCallback(async () => {
     if (!log) return
     const result = await analyseEntry(log.id, log.raw_text, currentLogDate)
+    console.log('parse-entry response:', result)
     if (!result) return
     setEntries(result.entries)
     setMentalState(result.mental_state)
     setWellbeingInsight(result.wellbeing_insight)
-    setFlagged(result.flagged)
-    setCrisisDismissed(false)
+    if (result.flagged) showCrisis()
     setLog((prev) => (prev ? { ...prev, ai_parsed: true } : prev))
   }, [log, currentLogDate, analyseEntry])
 
@@ -481,54 +486,6 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
               transition={{ duration: 0.25 }}
               className="space-y-4"
             >
-              {/* Crisis resources banner — shown when flagged, dismissible */}
-              <AnimatePresence>
-                {flagged && !crisisDismissed && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-4"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-amber-300">
-                          We noticed some signals in your entry that suggest you might be going through a difficult time. You&apos;re not alone.
-                        </p>
-                        <p className="mt-1 text-xs text-amber-400/80">
-                          Consider reaching out:
-                        </p>
-                        <div className="mt-2 flex flex-col gap-1 text-sm">
-                          <a
-                            href="tel:14416"
-                            className="font-medium text-amber-300 underline underline-offset-2"
-                          >
-                            Tele-MANAS: 14416
-                          </a>
-                          <a
-                            href="tel:9152987821"
-                            className="font-medium text-amber-300 underline underline-offset-2"
-                          >
-                            iCall: 9152987821
-                          </a>
-                          <p className="text-xs text-amber-400/70">
-                            Or speak to your college counselor
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setCrisisDismissed(true)}
-                        className="shrink-0 text-sm text-amber-400/60 hover:text-amber-400"
-                        aria-label="Dismiss"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
               <ParsedEntryView
                 log={log}
                 entries={entries}

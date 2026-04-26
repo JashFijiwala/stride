@@ -268,4 +268,7 @@ export interface AppState {
   setTodayParsed: (entries: ParsedEntry[]) => void
   todayMentalState: MentalState | null
   setTodayMentalState: (state: MentalState | null) => void
+  crisisVisible: boolean
+  showCrisis: () => void
+  hideCrisis: () => void
 }

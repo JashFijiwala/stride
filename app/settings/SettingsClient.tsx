@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { Moon, Sun, Trash2, LogOut, ChevronDown, ChevronUp, Loader2, Check } from 'lucide-react'
+import { Moon, Sun, Trash2, LogOut, ChevronDown, ChevronUp, Loader2, Check, HeartHandshake } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { calculateCurrentStreak } from '@/lib/utils/streaks'
 import { format, parseISO } from 'date-fns'
@@ -665,14 +665,15 @@ export function SettingsClient({ userId, email }: { userId: string; email: strin
               className="overflow-hidden"
             >
               <div className="border-t border-[var(--border)] px-5 pb-5 pt-4 space-y-3 text-sm leading-relaxed text-[var(--text-secondary)]">
-                <p>
-                  MindLens is a student mental health companion that works through your daily
-                  journal. Write about your day in plain English — MindLens reads it, tracks
-                  your stress and mood automatically, detects early warning signs, and guides
-                  you with evidence-based coping tools.
-                </p>
-                <p>No rigid forms. No checkboxes. No pressure.</p>
-                <p className="font-medium text-[var(--text-primary)]">Your daily mental health companion.</p>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-[var(--text-primary)]">MindLens</span>
+                  <span className="text-xs text-[var(--text-muted)]">v1.0.0</span>
+                </div>
+                <p>AI-powered mental health screening for Indian college students.</p>
+                <div className="space-y-1 text-xs text-[var(--text-muted)]">
+                  <p>Built for: <span className="font-medium">GDG Solution Challenge 2026</span></p>
+                  <p>SDG: <span className="font-medium">SDG 3: Good Health &amp; Well-Being</span></p>
+                </div>
               </div>
             </motion.div>
           )}
@@ -722,6 +723,14 @@ export function SettingsClient({ userId, email }: { userId: string; email: strin
 
       {/* Actions */}
       <div className="space-y-2">
+        <button
+          onClick={() => router.push('/resources')}
+          className="flex w-full items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] px-5 py-4 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--card-elevated)]"
+        >
+          <HeartHandshake size={16} />
+          Crisis Resources
+        </button>
+
         <button
           onClick={handleSignOut}
           className="flex w-full items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] px-5 py-4 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--card-elevated)]"
