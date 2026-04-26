@@ -2,56 +2,57 @@
 ## GDG Solution Challenge 2026 | Open Innovation | SDG 3
 
 > Use this document slide by slide to build your deck.
-> Recommended tool: Canva or Google Slides.
+> Recommended: Canva or Google Slides.
 > Total slides: 10 | Pitch time: 3 minutes
 
 ---
 
 ## SLIDE 1 — Title Slide
 
-**Headline:** Haven 🧠
-**Subline:** AI-powered mental health screening for Indian college students
+**App name:** Haven
+**Tagline:** Your safe space to breathe
+**Subline:** AI-powered mental health companion for Indian college students
 **Bottom:** GDG Solution Challenge 2026 · Open Innovation · SDG 3: Good Health & Well-Being
-**Visual idea:** Dark background, soft indigo glow, the Haven logo/name centered. Clean and minimal.
+**Visual:** Dark background, soft indigo/purple glow. Minimal and calm — no clutter.
 
 ---
 
-## SLIDE 2 — The Problem (Make them feel it)
+## SLIDE 2 — The Problem
 
 **Headline:** 7 in 10 Indian college students are struggling. Almost none get help.
 
-**Stats to show (big numbers, one at a time):**
+**Big numbers (show one at a time, large font):**
 - 🔴 **69.9%** have moderate to high anxiety
 - 🔴 **59.9%** experience depression
 - 🔴 **35 students die by suicide every day** in India
 - 🔴 **84.5% treatment gap** — most never receive help
-- 🔴 Only **0.75 psychiatrists per lakh population** (WHO recommends 3)
+- 🔴 **0.75 psychiatrists per lakh population** (WHO recommends 3)
 - 🔴 **Less than 10%** of youth ever access mental health services
 
-**Source line (small, bottom):** Cherian et al. 2025 | National Mental Health Survey India | UNICEF 2021
+**Source line (small):** Cherian et al. 2025 | National Mental Health Survey India | UNICEF 2021
 
 **What to say:**
-"India has 43 million college students. Nearly 70% are living with clinically significant anxiety or depression. Most don't know it. And even those who do — there's nobody to turn to. The infrastructure simply doesn't exist."
+"India has 43 million college students. Nearly 70% are living with clinically significant anxiety or depression. Most don't know it. And even those who do — there's almost nobody to turn to."
 
 ---
 
-## SLIDE 3 — Why Existing Solutions Don't Work
+## SLIDE 3 — Why Nothing Works Today
 
 **Headline:** The current options fail students
 
-**Three problems (3 columns or 3 boxes):**
+**Three columns:**
 
 ❌ **Psychiatrists are inaccessible**
-Long waitlists, high cost, stigma. 0.75 per lakh population. Most colleges have no counselor at all.
+0.75 per lakh population. Long waitlists, high cost, heavy stigma. Most colleges have no counselor.
 
-❌ **Generic apps aren't built for India**
-Apps like Calm and Headspace are western, English-only, subscription-based, and focused on wellness — not early screening.
+❌ **Existing apps aren't built for India**
+Calm and Headspace are Western, English-only, subscription-based. Not designed for Indian college students writing in Hinglish.
 
 ❌ **Students don't know they need help**
-Without any screening, students normalize their distress. By the time they seek help, it's often crisis-level.
+Without screening, students normalize distress. By the time they seek help, it's often crisis-level.
 
 **What to say:**
-"The Supreme Court of India mandated mental health infrastructure for all educational institutions in July 2025. As of today, compliance is patchy. Students can't wait for institutions to catch up."
+"The Supreme Court of India mandated mental health infrastructure for all educational institutions in July 2025. As of today, compliance is patchy. Students can't wait."
 
 ---
 
@@ -61,10 +62,10 @@ Without any screening, students normalize their distress. By the time they seek 
 
 **One line:** A free, private, AI-powered mental health companion built specifically for Indian college students.
 
-**Three pillars (icons + 2 lines each):**
+**Three pillars:**
 
 🔍 **Screen**
-Detects early mental health signals through daily journaling + formal PHQ-9/GAD-7 screening tools — the same instruments used by clinicians worldwide.
+Detects early warning signs through daily journaling + formal PHQ-9/GAD-7 screening — the same tools used by clinicians worldwide.
 
 📊 **Track**
 Visualizes mood, stress, sleep, and wellbeing trends over time. Students see their own patterns before they become problems.
@@ -72,87 +73,97 @@ Visualizes mood, stress, sleep, and wellbeing trends over time. Students see the
 🫁 **Support**
 Evidence-based coping exercises + immediate connection to real help (helplines, nearby counselors) when scores cross clinical thresholds.
 
-**Visual idea:** Three-column layout with icons, clean dark card design.
-
 ---
 
-## SLIDE 5 — How It Works (Demo Slide)
+## SLIDE 5 — How It Works
 
 **Headline:** One daily check-in. Powerful insights.
 
-**Show a flow (left to right with arrows or numbered steps):**
+**Flow (left → right):**
 
-1. **Check-in** (30 seconds)
-   Mood emoji + wellbeing score + sleep + energy + journal
+1. **Check-in** (2 min)
+Mood + wellbeing score + sleep + energy + journal
+Works in English, Hindi, Hinglish
 
-2. **AI Analysis** (Gemini 2.0 Flash)
-   Categorizes entries as stress signals / positive coping
-   Extracts PHQ-9 & GAD-7 signals from natural language
-   Returns empathetic wellbeing insight
+2. **Gemini 2.5 Flash Analysis**
+Categorizes entries: stress signal / positive coping
+Extracts PHQ-9 & GAD-7 signals from natural language
+Returns empathetic wellbeing insight
 
-3. **Formal Screening** (optional, 3 minutes)
-   PHQ-9 (depression) + GAD-7 (anxiety)
-   Clinically validated, one question per screen
+3. **Formal Screening** (3 min, optional)
+PHQ-9 (depression) + GAD-7 (anxiety)
+Clinically validated, one question per screen
 
-4. **Coping Exercises** (2-10 minutes)
-   Box breathing, CBT reframing, grounding, mindfulness
+4. **Coping Exercises**
+Box breathing, CBT reframing, grounding, mindfulness
+Each with research context + tutorial video
 
-5. **Get Help** (if needed)
-   Crisis modal + tap-to-call helplines + nearby counselors via Google Maps
+5. **Crisis Support** (if needed)
+Non-dismissible alert + tap-to-call helplines
+Google Maps finds nearby counselors
 
-**Visual idea:** App screenshots in phone mockups across the flow. Or a simple numbered flow diagram.
+**Visual:** App screenshots in phone mockups across the flow.
 
 ---
 
-## SLIDE 6 — The Technology (Google Tech Depth)
+## SLIDE 6 — The Technology
 
 **Headline:** Built with Google AI at its core
 
-**Google technologies (highlight these prominently — judges score this):**
+**Google technologies (highlight prominently):**
 
-🔵 **Gemini 2.0 Flash**
-- Daily journal analysis — categorizes each sentence as stress signal, positive coping, or neutral
-- Extracts soft PHQ-9 & GAD-7 signal estimates from natural language (9 depression domains + 7 anxiety domains)
+🔵 **Gemini 2.5 Flash — Core AI Engine**
+- Analyses daily journal entries in English, Hindi, and Hinglish
+- Extracts PHQ-9 signals across 9 depression domains
+- Extracts GAD-7 signals across 7 anxiety domains
+- Detects self-harm signals in any language (including "jeena nahi chahta")
 - Generates personalized weekly wellbeing reports
 - Powers AI-suggested CBT thought reframes
 
 🟢 **Google Maps Places API**
-- Finds nearby psychiatrists and counselors using browser geolocation
-- Shows ratings, hours, directions — real, actionable help
+- Finds nearby psychiatrists and counselors via geolocation
+- Shows ratings, hours, tap-to-call, directions
 
 🔴 **Google OAuth**
-- One-tap sign in with Google — zero friction for students
+- One-tap sign in — zero friction for students
 
-🟡 **Google Cloud (via Supabase on GCP)**
-- Serverless API routes, ap-south-1 region for low latency in India
+🟡 **Google Cloud (via Supabase on GCP ap-south-1)**
+- Low latency for Indian users
+- Serverless API routes
 
 **Full stack:** Next.js · TypeScript · Tailwind CSS · Supabase · Recharts · Framer Motion · PWA
 
 ---
 
-## SLIDE 7 — Clinical Foundation
+## SLIDE 7 — Clinical Foundation + Multilingual
 
-**Headline:** Grounded in validated clinical science
+**Headline:** Built on validated science. Speaks your language.
 
-**Left column — PHQ-9:**
-Patient Health Questionnaire-9
-→ Gold standard depression screening tool
-→ Used by clinicians worldwide since 2001
-→ Free, validated, 9 questions, 3 minutes
-→ Scores map to: Minimal / Mild / Moderate / Moderately Severe / Severe
+**Left — Clinical Tools:**
 
-**Right column — GAD-7:**
-Generalized Anxiety Disorder Scale-7
+PHQ-9 (Patient Health Questionnaire-9)
+→ Gold standard depression screening worldwide
+→ 9 questions, 3 minutes, clinically validated
+→ Scores: Minimal / Mild / Moderate / Moderately Severe / Severe
+
+GAD-7 (Generalized Anxiety Disorder-7)
 → Standard anxiety screening instrument
 → Validated across diverse populations including India
 → 7 questions, 2 minutes
-→ Same severity categories
 
-**Bottom note:**
-"Haven uses these instruments for SCREENING, not diagnosis. All results are accompanied by disclaimers and professional referrals where appropriate. The AI extracts SOFT SIGNALS from journal text as a supplementary layer — never as a replacement for formal assessment."
+**Right — Multilingual AI:**
 
-**What to say:**
-"We didn't invent the science. We made it accessible. PHQ-9 and GAD-7 are the same tools that psychiatrists use. We put them in a student's pocket, for free."
+Haven understands:
+- ✅ English ("feeling really overwhelmed today")
+- ✅ Hindi ("आज बहुत stressed था")
+- ✅ Hinglish ("kuch acha nahi lag raha, bahut tired hoon")
+- ✅ Roman Hindi ("neend nahi aayi, dil bhaari hai")
+- ✅ Broken English ("today i is very sad cant focus")
+
+Crisis detection works in ALL languages — "jeena nahi chahta" triggers the same alert as "don't want to be here."
+
+**Disclaimer note (small):**
+"Haven uses these for SCREENING, not diagnosis. Results always include professional referral guidance."
 
 ---
 
@@ -160,21 +171,18 @@ Generalized Anxiety Disorder Scale-7
 
 **Headline:** Real students. Real results.
 
-**This slide needs your actual user testing data — fill in after testing with classmates.**
+*(Fill in with actual numbers from your testing)*
 
-Template (fill in with real numbers):
-- Tested with **[X] students** from **[your college name]**
-- **[X]%** said they had never taken a mental health screening before
-- **[X]%** found the daily check-in easy to complete in under 2 minutes
+Template:
+- Tested with **[X] students** from **[college name]**
+- **[X]%** had never taken a mental health screening before
+- **[X]%** found check-in easy to complete in under 2 minutes
 - **[X]%** said the wellbeing insight felt accurate and empathetic
-- **[X] students** used at least one coping exercise after their analysis
-- User feedback: *"[paste a real quote from a tester]"*
-
-**If you have before/after mood scores from testing:**
-Show a simple chart — avg mood score day 1 vs day 7.
+- **[X] students** tried at least one coping exercise after analysis
+- Quote: *"[paste a real quote from a tester]"*
 
 **What to say:**
-"We didn't build this in a vacuum. We tested with real students at our college. Here's what they told us."
+"We didn't build this in a vacuum. We tested with real students at our college. The most common response: 'I didn't realize I was this stressed until I saw it in the trends.'"
 
 ---
 
@@ -182,22 +190,21 @@ Show a simple chart — avg mood score day 1 vs day 7.
 
 **Headline:** Where Haven goes next
 
-**Short-term (next 3 months):**
-- Multilingual support — Hindi, Gujarati, Tamil (Google Translate API)
-- College counselor dashboard — anonymized aggregate trends for institutions
-- WhatsApp integration for daily check-in reminders
+**Short-term (3 months):**
+- Full Hindi/Gujarati UI translation (Google Translate API)
+- College counselor dashboard — anonymized aggregate trends
+- WhatsApp reminders for daily check-ins
 
 **Medium-term (6-12 months):**
-- Partner with 10 GDG on Campus chapters to onboard students at scale
-- Anonymous peer support circles (moderated, safe)
-- Integration with Tele-MANAS API for direct helpline connection
+- Partner with GDG on Campus chapters across India
+- Anonymous peer support circles (moderated)
+- Direct Tele-MANAS API integration
 
-**Scale potential:**
-- India has **43 million college students**
-- Target: 1% adoption = **430,000 students** with access to mental health screening
-- Zero marginal cost per user — AI inference + Supabase free tier scales to thousands
-
-**Visual idea:** A simple timeline or three-phase roadmap graphic.
+**Scale:**
+- India: **43 million college students**
+- 1% adoption = **430,000 students** with free mental health screening
+- Zero marginal cost per user — Gemini free tier + Supabase scales to thousands
+- PWA — no app store needed, installs directly from browser
 
 ---
 
@@ -207,10 +214,10 @@ Show a simple chart — avg mood score day 1 vs day 7.
 
 **Three lines:**
 - Free. Private. Built for India.
-- Available now at: [your Vercel URL]
-- Open source: github.com/JashFijiwala/stride (mindlens branch)
+- Live at: [your Vercel URL]
+- Open source: github.com/JashFijiwala/stride
 
-**Crisis resources (show at bottom — judges will notice this):**
+**Crisis resources (bottom — judges will notice):**
 Tele-MANAS: 14416 · iCall: 9152987821 · Emergency: 112
 
 **Team names**
@@ -220,42 +227,41 @@ Tele-MANAS: 14416 · iCall: 9152987821 · Emergency: 112
 
 ---
 
-## Design Tips for the Deck
+## Design Tips
 
 **Color palette:**
 - Background: #0A0A0F (near black)
 - Card: #13131A
-- Accent primary: #818CF8 (indigo)
-- Accent secondary: #A78BFA (purple)
-- Green: #4ADE80
-- Red: #F87171
+- Accent: #818CF8 (indigo) / #A78BFA (purple)
+- Green: #4ADE80 | Red: #F87171 | Amber: #FCD34D
 - Text: White / #94A3B8 (muted)
 
-**Fonts:**
-- Headings: Inter Bold or Poppins SemiBold
-- Body: Inter Regular
+**Fonts:** Inter Bold (headings) / Inter Regular (body)
 
-**Slide design rules:**
+**Rules:**
 - Max 3 points per slide
-- Every stat as a BIG number, not buried in text
-- Use phone mockups (from Figma or Canva) for app screenshots
-- Dark background throughout — matches the app's dark theme
+- Every stat as a BIG number
+- Dark background throughout — matches the app
+- Use phone mockups for screenshots (Figma/Canva)
 
-**Demo video tips (if recording separately):**
-- Start with the problem stat (big number on screen)
-- Show: check-in → analyse → see stress signals → tap "Take a breather" → breathing exercise
-- End with: crisis modal triggering + helpline numbers showing
-- Voiceover only — no face cam needed
-- Max 2 minutes. Keep it tight.
+**Demo video (2 min max):**
+- Open: problem stat on screen
+- Show: check-in → analyse → stress signals detected
+- Show: "Take a breather 🌬️" → breathing exercise
+- Show: screening → PHQ-9 → results
+- Show: crisis modal triggering
+- End: wellbeing dashboard with trends
+- Voiceover only, no face cam needed
 
 ---
 
 ## Key Messages to Hammer Home
 
-1. **The problem is undeniable** — peer-reviewed 2025 data, not speculation
-2. **We're not replacing therapists** — we're bridging the awareness gap
+1. **Problem is undeniable** — 2025 peer-reviewed data, not opinion
+2. **Not replacing therapists** — bridging the awareness gap
 3. **Clinical tools, not pseudoscience** — PHQ-9 and GAD-7 are what psychiatrists use
-4. **Google AI is the engine** — Gemini isn't decorative, it's doing the heavy lifting
-5. **India-specific** — multilingual (planned), India helplines, Indian college context
-6. **Scalable** — PWA, serverless, zero infra cost to add users
-7. **Ethical** — crisis detection, non-dismissible alerts, clear disclaimers throughout
+4. **Gemini is the engine** — not decorative, does the heavy lifting
+5. **Truly India-specific** — Hinglish support, Indian helplines, Indian college context
+6. **Multilingual** — works for students who don't write in proper English
+7. **Ethical** — crisis detection in all languages, non-dismissible alerts, clear disclaimers
+8. **Scalable** — PWA, serverless, zero infra cost to add users

@@ -1,9 +1,9 @@
-# 🧠 Haven
-### Your daily mental health companion for Indian college students
+# 🧘 Haven
+### Your safe space to breathe — AI-powered mental health companion for Indian college students
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.2-black)](https://nextjs.org)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green)](https://supabase.com)
-[![Gemini](https://img.shields.io/badge/Google-Gemini%202.0-blue)](https://ai.google.dev)
+[![Gemini](https://img.shields.io/badge/Google-Gemini%202.5%20Flash-blue)](https://ai.google.dev)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 > **GDG Solution Challenge 2026** — Open Innovation Track | SDG 3: Good Health & Well-Being
@@ -12,32 +12,29 @@
 
 ## The Problem
 
-India is facing a silent mental health crisis among college students — and the numbers are alarming.
+India is facing a silent mental health crisis among college students:
 
-- **69.9%** of Indian college students experience moderate to high anxiety *(Cherian et al., 2025 — 1,628 students, 8 cities)*
-- **59.9%** experience depression *(same study)*
-- **33.6%** report moderate to severe depressive symptoms *(Cherian et al., 2025 — 8,542 students, 9 states)*
-- **18.8%** have considered suicide at some point *(same study)*
-- **35 students die by suicide every single day** in India — over 13,000 in 2022 alone
-- **83–84.5%** treatment gap — most students who need help never receive it
+- **69.9%** of Indian college students experience moderate to high anxiety
+- **59.9%** experience depression *(Cherian et al., 2025 — 1,628 students, 8 cities)*
+- **33.6%** report moderate to severe depressive symptoms *(8,542 students, 9 states)*
+- **35 students die by suicide every single day** in India
+- **84.5% treatment gap** — most who need help never receive it
+- Only **0.75 psychiatrists per lakh population** (WHO recommends 3)
 - **Less than 10%** of Indian youth access mental health services *(UNICEF, 2021)*
-- Only **0.75 psychiatrists per lakh population** — far below WHO's recommended 3 per lakh
 
-The barriers are real: stigma, cost, logistics, and a simple lack of awareness. Most students don't know they're struggling until they're in crisis. By then, it's often too late.
-
-**Haven bridges this gap** — not by replacing professional care, but by helping students understand their own mental health patterns before they reach crisis point.
+Most students don't know they're struggling until they're in crisis. Haven bridges this gap — not by replacing professional care, but by helping students understand their own mental health patterns before they reach crisis point.
 
 ---
 
 ## The Solution
 
-Haven is an AI-powered student mental health screening and stress management Progressive Web App (PWA). It does three things:
+Haven is an AI-powered student mental health screening and stress management Progressive Web App (PWA):
 
-**1. Screen** — Detect early warning signs through daily AI-powered journal analysis and formal PHQ-9/GAD-7 clinical screening tools.
+**Screen** — Detect early warning signs through daily AI-powered journal analysis and formal PHQ-9/GAD-7 clinical screening tools.
 
-**2. Track** — Show students their own mood, stress, and wellbeing trends over time so they can notice patterns they'd otherwise miss.
+**Track** — Show students their own mood, stress, and wellbeing trends over time.
 
-**3. Support** — Provide evidence-based coping exercises (breathing, CBT reframing, grounding, mindfulness) and connect students to professional resources when needed.
+**Support** — Evidence-based coping exercises + immediate connection to real help when needed.
 
 ---
 
@@ -45,59 +42,61 @@ Haven is an AI-powered student mental health screening and stress management Pro
 
 **SDG 3: Good Health and Well-Being**
 - Target 3.4: Promote mental health and well-being
-- Target 3.8: Achieve universal health coverage including access to quality mental health services
-
-Haven directly addresses the 84.5% treatment gap by making mental health awareness accessible, private, and free — on any device, from any location.
+- Target 3.8: Universal access to quality mental health services
 
 ---
 
 ## Features
 
 ### 🏠 Daily Check-In
-Students log their day through a structured but conversational interface — mood emoji, wellbeing score (1-10), sleep hours, energy level, and a free-text journal. Simple enough to complete in under 2 minutes.
+Mood emoji, wellbeing score (1-10), sleep hours, energy level, and free-text journal. Under 2 minutes. Smart time-based greetings ("Working late, Jash? 💻", "Happy Sunday ☀️").
 
-### 🤖 AI Wellbeing Analysis
-Powered by Google Gemini 2.0. When a student taps "Analyse My Wellbeing", Gemini reads the journal entry and returns:
-- Entry-by-entry categorization (stress signal / positive coping / neutral)
-- Mental state summary (primary mood, energy, stress level)
-- Soft PHQ-9 and GAD-7 signal estimates extracted from natural language
-- A warm, empathetic wellbeing insight
-- Automatic crisis flag if self-harm signals are detected
+### 🤖 AI Wellbeing Analysis — Gemini 2.5 Flash
+- Entry-by-entry categorization: stress signal / positive coping / neutral
+- Mental state extraction: primary mood, energy level, stress level
+- Soft PHQ-9 (9 domains) and GAD-7 (7 domains) signal estimates from natural language
+- Empathetic wellbeing insight
+- Auto crisis flag on self-harm signals
 
-### 📋 Formal Screening (PHQ-9 & GAD-7)
-Clinically validated depression and anxiety screening questionnaires — the same tools used by mental health professionals worldwide. One question per screen with smooth transitions. Scores are stored over time so students can track their progress. Results include severity levels, interpretation, and resource recommendations.
+**Multilingual:** Handles English, Hindi (Devanagari), Hinglish, and Roman Hindi. "Aaj bahut stressed tha, neend nahi aayi" — Haven understands it correctly and analyzes it accurately.
+
+### 📋 Formal Screening — PHQ-9 & GAD-7
+Clinically validated instruments used by psychiatrists worldwide. One question per screen with Framer Motion transitions. Severity scoring, score history over time, and resource recommendations. Crisis modal triggered on PHQ-9 Q9 (self-harm) score > 0.
 
 ### 🫁 Coping Toolkit
-Four evidence-based stress management exercises:
-- **Box Breathing** — 4-4-4-4 pattern with animated circle (used by Navy SEALs and first responders)
-- **CBT Thought Reframe** — 5-step guided cognitive restructuring with AI-suggested reframes
-- **5-4-3-2-1 Grounding** — Sensory awareness exercise to interrupt panic and anxiety
-- **Mindfulness Timer** — Guided meditation with SVG progress ring and rotating prompts
-
-Each exercise includes a research-backed "About" section and links to tutorial videos.
+Four evidence-based exercises with research-backed about sections and tutorial video links:
+- **Box Breathing** — 4-4-4-4 Framer Motion animated circle
+- **CBT Thought Reframe** — 5-step guided form + AI reframe suggestion via Gemini
+- **5-4-3-2-1 Grounding** — Sensory awareness to interrupt panic
+- **Mindfulness Timer** — SVG progress ring + rotating mindfulness prompts
 
 ### 📊 Wellbeing Dashboard
-Visual trends over time: mood timeline, wellbeing score trend, PHQ-9/GAD-7 score history with severity zone shading, sleep-mood correlations, and AI-generated weekly wellbeing reports.
+Mood timeline, wellbeing score trend, PHQ-9/GAD-7 history chart with severity zone shading, sleep-mood correlations, energy-mood correlations, coping exercise impact tracking, AI weekly wellbeing reports.
 
 ### 🆘 Crisis System
-When the AI detects self-harm signals or formal screening scores cross clinical thresholds, a non-dismissible crisis modal surfaces immediately with direct tap-to-call links to Tele-MANAS (14416), iCall, and Vandrevala Foundation.
+Non-dismissible global modal triggers when:
+- AI detects self-harm signals in any language (English, Hindi, Hinglish)
+- PHQ-9 formal score ≥ 20 or GAD-7 ≥ 15
+- PHQ-9 Question 9 score > 0
+
+Shows tap-to-call: Tele-MANAS (14416), iCall (9152987821), Vandrevala Foundation (1860-2662-345), Emergency (112).
 
 ### 📍 Resource Finder
-Nearby mental health professionals via Google Maps Places API (geolocation-based), national helplines, and online therapy platforms (Wysa, YourDOST, Amaha).
+Nearby mental health professionals via Google Maps Places API. National helplines. Online platforms: Wysa, YourDOST, Amaha.
 
 ### 📅 History
-Calendar view of all past check-ins with mood emoji overlays and day-detail slide-in panel.
+Calendar view with mood emoji overlays and day-detail slide-in panel.
 
 ---
 
 ## Google Technologies Used
 
-| Product | How it's used |
-|---------|--------------|
-| **Gemini 2.0 Flash** | Journal analysis, PHQ-9/GAD-7 signal extraction, weekly wellbeing reports, CBT reframe suggestions |
-| **Google Maps Places API** | Nearby mental health professional finder on the Resources page |
-| **Google Cloud** | Supabase runs on GCP (ap-south-1 region); serverless API routes via Vercel |
-| **Google OAuth** | Sign in with Google — one-tap authentication |
+| Product | Integration |
+|---------|-------------|
+| **Gemini 2.5 Flash** | Journal analysis, PHQ-9/GAD-7 signal extraction, multilingual understanding (Hindi/Hinglish/English), weekly reports, CBT reframe suggestions |
+| **Google Maps Places API** | Nearby mental health professional finder (geolocation-based) |
+| **Google Cloud** | Supabase on GCP ap-south-1; serverless API routes |
+| **Google OAuth** | One-tap sign in with Google |
 
 ---
 
@@ -109,11 +108,10 @@ Calendar view of all past check-ins with mood emoji overlays and day-detail slid
 | Styling | Tailwind CSS v4 |
 | Animations | Framer Motion |
 | Charts | Recharts |
-| Icons | Lucide React |
 | State | Zustand |
-| Database | Supabase (PostgreSQL + Row Level Security) |
+| Database | Supabase (PostgreSQL + RLS) |
 | Auth | Supabase Auth + Google OAuth |
-| AI | Google Gemini 2.0 Flash |
+| AI | Google Gemini 2.5 Flash |
 | Maps | Google Maps Places API |
 | PWA | next-pwa |
 | Hosting | Vercel |
@@ -126,56 +124,57 @@ Calendar view of all past check-ins with mood emoji overlays and day-detail slid
 Student (PWA — mobile or desktop)
 │
 ├── Daily Check-In (/today)
-│   ├── Mood emoji + wellbeing slider + sleep + energy
-│   ├── Free-text journal
+│   ├── Mood + slider + sleep + energy + journal
+│   │   (English / Hindi / Hinglish supported)
 │   └── "Analyse My Wellbeing" → /api/parse-entry
-│                                      │
-│                              Local Parser (regex)
-│                                      │
-│                              Gemini 2.0 Flash
-│                              ┌───────────────────┐
-│                              │ Entry categorization│
-│                              │ Mental state        │
-│                              │ PHQ-9 signals       │
-│                              │ GAD-7 signals       │
-│                              │ Wellbeing insight   │
-│                              │ flagged: boolean    │
-│                              └───────────────────┘
-│                                      │
-│                              Supabase (PostgreSQL)
-│                              ├── daily_logs
-│                              ├── mental_states (+ phq9/gad7)
-│                              ├── parsed_entries
-│                              └── user_summaries
+│              │
+│         Local Parser (stress keywords, coping signals,
+│         isolation signals — regex layer, no API cost)
+│              │
+│         Gemini 2.5 Flash
+│         ┌──────────────────────────────┐
+│         │ Multilingual journal analysis│
+│         │ Entry categorization         │
+│         │ Mental state object          │
+│         │ PHQ-9 signals (9 domains)    │
+│         │ GAD-7 signals (7 domains)    │
+│         │ Wellbeing insight (empathetic│
+│         │ flagged: boolean             │
+│         └──────────────────────────────┘
+│              │
+│         Supabase PostgreSQL (RLS)
+│         daily_logs / mental_states /
+│         parsed_entries / user_summaries
 │
 ├── Screening (/screening)
-│   ├── PHQ-9 (9 questions) → scoring → severity
-│   ├── GAD-7 (7 questions) → scoring → severity
-│   └── Saves to: screening_results
+│   ├── PHQ-9 — 9 questions (exact clinical wording)
+│   ├── GAD-7 — 7 questions (exact clinical wording)
+│   ├── Q9 crisis modal (non-dismissible)
+│   └── → screening_results table
 │
 ├── Coping Toolkit (/coping)
-│   ├── Box Breathing (/coping/breathing)
-│   ├── CBT Reframe (/coping/reframe) → /api/coping/reframe → Gemini
-│   ├── 5-4-3-2-1 Grounding (/coping/grounding)
-│   └── Mindfulness Timer (/coping/mindfulness)
-│   Saves to: coping_sessions
+│   ├── /coping/breathing — Framer Motion circle
+│   ├── /coping/reframe — 5 steps + Gemini suggestion
+│   ├── /coping/grounding — sensory inputs
+│   └── /coping/mindfulness — SVG ring timer
+│   → coping_sessions table
 │
 ├── Wellbeing Dashboard (/insights)
-│   ├── AI wellbeing score (latest phq9/gad7 estimates)
+│   ├── Wellbeing score card (latest phq9/gad7 estimates)
 │   ├── Mood timeline + wellbeing trend (Recharts)
-│   ├── Screening score history chart
-│   ├── Sleep/energy/coping correlations
+│   ├── Screening score history (severity zones)
+│   ├── Correlations: sleep/energy/coping vs mood
 │   └── Weekly report → /api/weekly-insights → Gemini
 │
 ├── Resources (/resources)
-│   ├── National helplines (Tele-MANAS, iCall, Vandrevala)
-│   ├── Online platforms (Wysa, YourDOST, Amaha)
-│   └── Nearby counselors → /api/maps-proxy → Google Maps Places API
+│   ├── National helplines (tap-to-call)
+│   ├── Online platforms
+│   └── /api/maps-proxy → Google Maps Places API
 │
-└── Crisis Modal (global — app/layout.tsx)
-    Triggers on: flagged journal analysis OR high screening scores
-    Shows: helplines with tap-to-call, resource finder link
-    Non-dismissible except via explicit button
+└── Crisis Modal (global, app/layout.tsx)
+    Triggers on flagged journal OR high screening scores
+    Detects signals in English + Hindi + Hinglish
+    Non-dismissible — only "I understand" button closes it
 ```
 
 ---
@@ -184,16 +183,16 @@ Student (PWA — mobile or desktop)
 
 ```sql
 profiles          — user profile, timezone, current_log_date
-daily_logs        — raw text, rating, mood emoji, sleep hours, energy level
-parsed_entries    — AI-categorized journal lines (category, sentiment, tags)
+daily_logs        — raw text, rating, mood emoji, sleep_hours, energy_level
+parsed_entries    — AI-categorized lines (category, sentiment, tags)
 mental_states     — mood/energy/stress + phq9_signals + gad7_signals + flagged
-screening_results — formal PHQ-9/GAD-7 scores, severity, flagged
+screening_results — PHQ-9/GAD-7 scores, severity, flagged
 coping_sessions   — exercise type, completed, duration, notes
-weekly_insights   — Gemini-generated weekly wellbeing reports
+weekly_insights   — Gemini weekly wellbeing reports
 user_summaries    — rolled-up stats used as AI context
 ```
 
-All tables have Row Level Security — users can only access their own data.
+All tables have Row Level Security — users only access their own data.
 
 ---
 
@@ -202,27 +201,24 @@ All tables have Row Level Security — users can only access their own data.
 ### Prerequisites
 - Node.js 18+
 - Supabase account (free tier)
-- Google AI Studio API key (free)
-- Google Cloud account with Places API enabled (free tier)
+- Gemini API key — [aistudio.google.com](https://aistudio.google.com) (free)
+- Google Cloud with Places API enabled (free tier)
 
-### 1. Clone the repository
+### 1. Clone & install
 
 ```bash
 git clone https://github.com/JashFijiwala/stride.git
 cd stride
-git checkout mindlens
 npm install
 ```
 
-### 2. Set up Supabase
+### 2. Supabase setup
 
-- Create a new project at [supabase.com](https://supabase.com)
-- Go to SQL Editor and run `migration-1.sql` then `migration-2.sql` (in project root)
+- Create project at [supabase.com](https://supabase.com)
+- Run `migration-1.sql` then `migration-2.sql` in SQL Editor
 - Enable Google OAuth in Authentication → Providers
 
-### 3. Configure environment variables
-
-Create `.env.local` in the project root:
+### 3. Environment variables
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -239,15 +235,11 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
-
-### 5. Deploy to Vercel
+### 5. Deploy
 
 ```bash
 vercel --prod
 ```
-
-Add all environment variables in Vercel dashboard → Settings → Environment Variables.
 
 ---
 
@@ -255,22 +247,24 @@ Add all environment variables in Vercel dashboard → Settings → Environment V
 
 | Name | Role |
 |------|------|
-| Jash Fijiwala | Lead Developer — Full-stack, AI integration, Supabase |
-| [Member 2] | UI/UX — Design, animations, mobile responsiveness |
-| [Member 3] | Research & Testing — User feedback, clinical validation |
-| [Member 4] | Presentation — Demo video, project deck, pitch |
+| Jash Fijiwala | Lead Developer & Pitch — Full-stack development, AI integration, Supabase, deployment, pitch delivery |
+| Fenil Shilodre | Presentation — Project deck, demo video, visual design |
+| Jatin Bendale | Research & Documentation — Clinical research, user testing, README |
+| Sarthak Yerpude | QA & Testing — Feature testing, bug reporting, user feedback collection |
 
 ---
 
 ## Disclaimer
 
-Haven is a mental health screening and wellbeing tracking tool. It is **not** a diagnostic tool, not a therapeutic service, and not a replacement for professional mental health care. The PHQ-9 and GAD-7 are validated screening instruments used for awareness purposes only. If you are in crisis, please contact Tele-MANAS at **14416** (free, 24/7) or emergency services at **112**.
+Haven is a screening and wellbeing tracking tool — not a diagnostic service and not a replacement for professional mental health care. The PHQ-9 and GAD-7 are validated screening instruments used for awareness only. If you are in crisis: **Tele-MANAS 14416** (free, 24/7) or **Emergency 112**.
 
----
+## AI Disclosure
+
+AI tools (Google Gemini 2.5 Flash, Claude) were used to assist in code generation, prompt engineering, and development of this project.
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT — see [LICENSE](LICENSE) for details.
 
 ---
 
