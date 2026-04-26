@@ -544,10 +544,10 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">
-                    Need support right now?
+                    Take a breather 🌬️
                   </p>
                   <p className="mt-0.5 text-sm text-[var(--text-muted)]">
-                    Try a guided coping exercise
+                    A few minutes can make a difference
                   </p>
                 </div>
                 <ArrowRight size={16} className="shrink-0 text-[var(--text-muted)]" />

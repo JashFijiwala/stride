@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Footprints } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import type { WeeklyInsight } from '@/lib/types'
 
 interface SuggestionCardProps {
@@ -10,6 +11,8 @@ interface SuggestionCardProps {
 }
 
 export function SuggestionCard({ insight, totalDaysLogged }: SuggestionCardProps) {
+  const router = useRouter()
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 6 }}
@@ -21,7 +24,7 @@ export function SuggestionCard({ insight, totalDaysLogged }: SuggestionCardProps
           <Footprints size={14} className="text-[var(--accent)]" />
         </div>
         <p className="text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-          This Week&apos;s Nudge
+          Your Coping Tip
         </p>
       </div>
 
@@ -40,8 +43,8 @@ export function SuggestionCard({ insight, totalDaysLogged }: SuggestionCardProps
         <div>
           <p className="text-sm text-[var(--text-secondary)]">
             {totalDaysLogged < 7
-              ? `Log ${7 - totalDaysLogged} more ${7 - totalDaysLogged === 1 ? 'day' : 'days'} to unlock your first bit-by-bit suggestion.`
-              : 'Generate your weekly report to get a personalised suggestion.'}
+              ? `Log ${7 - totalDaysLogged} more ${7 - totalDaysLogged === 1 ? 'day' : 'days'} to unlock your first coping tip.`
+              : 'Generate your weekly report to get a personalised coping tip.'}
           </p>
           {totalDaysLogged < 7 && (
             <>
@@ -58,6 +61,13 @@ export function SuggestionCard({ insight, totalDaysLogged }: SuggestionCardProps
           )}
         </div>
       )}
+
+      <button
+        onClick={() => router.push('/coping')}
+        className="mt-4 text-xs font-medium text-[var(--accent)] hover:underline"
+      >
+        Try an exercise →
+      </button>
     </motion.div>
   )
 }

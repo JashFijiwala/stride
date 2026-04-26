@@ -3,11 +3,12 @@
 import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
 import { useInsights } from '@/hooks/useInsights'
-import { useHabits } from '@/hooks/useHabits'
+import { useWellbeingCorrelations } from '@/hooks/useWellbeingCorrelations'
 import { SuggestionCard } from '@/components/insights/SuggestionCard'
 import { StreakSection } from '@/components/insights/StreakSection'
 import { WeeklySummaryCard } from '@/components/insights/WeeklySummaryCard'
 import { CorrelationCard } from '@/components/insights/CorrelationCard'
+import { WellbeingScoreCard } from '@/components/insights/WellbeingScoreCard'
 import { PatternCard } from '@/components/insights/PatternCard'
 import { FutureHabitsSection } from '@/components/insights/FutureHabitsSection'
 import { SkeletonCard } from '@/components/ui/Skeleton'
@@ -19,6 +20,10 @@ const MoodTimeline = dynamic(
 )
 const RatingTrend = dynamic(
   () => import('@/components/insights/RatingTrend').then((m) => m.RatingTrend),
+  { ssr: false, loading: () => <ChartSkeleton /> }
+)
+const ScreeningHistory = dynamic(
+  () => import('@/components/insights/ScreeningHistory').then((m) => m.ScreeningHistory),
   { ssr: false, loading: () => <ChartSkeleton /> }
 )
 
@@ -61,10 +66,9 @@ interface InsightsClientProps {
 
 export function InsightsClient({ userId }: InsightsClientProps) {
   const { data: insights, loading, generatingWeekly, generateWeeklyInsight } = useInsights(userId)
-  const { data: habitsData, loading: habitsLoading } = useHabits(userId)
-
   const { moodPoints, weeklyInsight, totalDaysLogged } = insights
-  const { habits, correlations } = habitsData
+
+  const { correlations: wellbeingCorrelations } = useWellbeingCorrelations(userId, totalDaysLogged)
 
   const [patterns, setPatterns] = useState<Pattern[]>([])
   const [patternsLoading, setPatternsLoading] = useState(false)
@@ -96,30 +100,35 @@ export function InsightsClient({ userId }: InsightsClientProps) {
       .finally(() => setPatternsLoading(false))
   }, [loading, totalDaysLogged, userId])
 
-  const showCorrelations = totalDaysLogged >= 14 && correlations.length > 0
+  const showCorrelations = totalDaysLogged >= 14 && wellbeingCorrelations.length > 0
   const showTeaser14 = totalDaysLogged >= 7 && totalDaysLogged < 14
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-4 py-6">
 
-      {/* 1 — This Week's Nudge */}
+      {/* Page heading */}
+      <div>
+        <h1 className="text-xl font-bold text-[var(--text-primary)]">Wellbeing Dashboard</h1>
+        <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+          Your mental health journey, at a glance
+        </p>
+      </div>
+
+      {/* 1 — Wellbeing Score (shows once phq9_estimate is available) */}
+      {totalDaysLogged >= 3 && (
+        <WellbeingScoreCard userId={userId} totalDaysLogged={totalDaysLogged} />
+      )}
+
+      {/* 2 — This Week's Nudge */}
       <SuggestionCard insight={weeklyInsight} totalDaysLogged={totalDaysLogged} />
 
-      {/* 2 — Streaks */}
+      {/* 3 — Streaks */}
       <section className="space-y-3">
         <SectionHeading>Streaks</SectionHeading>
-        {habitsLoading ? (
-          <div className="space-y-3">
-            {[1, 2].map((i) => (
-              <div key={i} className="h-20 animate-pulse rounded-2xl border border-[var(--border)] bg-[var(--card)]" />
-            ))}
-          </div>
-        ) : (
-          <StreakSection habits={habits} />
-        )}
+        <StreakSection userId={userId} />
       </section>
 
-      {/* 3 — Mood timeline */}
+      {/* 4 — Mood timeline */}
       <section className="space-y-3">
         <SectionHeading>Mood Timeline</SectionHeading>
         {loading ? (
@@ -129,9 +138,9 @@ export function InsightsClient({ userId }: InsightsClientProps) {
         )}
       </section>
 
-      {/* 4 — Rating trend */}
+      {/* 5 — Wellbeing Trend (was Day Rating Trend) */}
       <section className="space-y-3">
-        <SectionHeading>Day Rating Trend</SectionHeading>
+        <SectionHeading>Wellbeing Trend</SectionHeading>
         {loading ? (
           <ChartSkeleton />
         ) : (
@@ -139,7 +148,13 @@ export function InsightsClient({ userId }: InsightsClientProps) {
         )}
       </section>
 
-      {/* 5 — Patterns (unlocks at 14 days) */}
+      {/* 6 — Screening Score History (unlocks at 2+ screenings) */}
+      <section className="space-y-3">
+        <SectionHeading>Screening History</SectionHeading>
+        <ScreeningHistory userId={userId} />
+      </section>
+
+      {/* 7 — Patterns (unlocks at 14 days) */}
       {totalDaysLogged >= 14 && (patternsLoading || patterns.length > 0) && (
         <section className="space-y-3">
           <SectionHeading>Your Patterns</SectionHeading>
@@ -158,7 +173,7 @@ export function InsightsClient({ userId }: InsightsClientProps) {
         </section>
       )}
 
-      {/* 6 — Future habits */}
+      {/* 8 — Future habits */}
       <section className="space-y-3">
         <SectionHeading>Habits I&apos;m Building</SectionHeading>
         <FutureHabitsSection
@@ -168,9 +183,9 @@ export function InsightsClient({ userId }: InsightsClientProps) {
         />
       </section>
 
-      {/* 7 — Weekly summary */}
+      {/* 9 — Weekly Wellbeing Report */}
       <section className="space-y-3">
-        <SectionHeading>Weekly Summary</SectionHeading>
+        <SectionHeading>Weekly Wellbeing Report</SectionHeading>
         <WeeklySummaryCard
           insight={weeklyInsight}
           totalDaysLogged={totalDaysLogged}
@@ -179,12 +194,12 @@ export function InsightsClient({ userId }: InsightsClientProps) {
         />
       </section>
 
-      {/* 8 — Correlations */}
+      {/* 10 — Stress Patterns (wellbeing correlations, unlocks at 14 days) */}
       {showCorrelations && (
         <section className="space-y-3">
-          <SectionHeading>What&apos;s shaping your days</SectionHeading>
+          <SectionHeading>Stress Patterns</SectionHeading>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {correlations.map((c, i) => (
+            {wellbeingCorrelations.map((c, i) => (
               <CorrelationCard key={c.habit_name} correlation={c} index={i} />
             ))}
           </div>
@@ -195,7 +210,7 @@ export function InsightsClient({ userId }: InsightsClientProps) {
       {showTeaser14 && (
         <div className="rounded-2xl border border-dashed border-[var(--border)] p-5 text-center">
           <p className="text-sm font-medium text-[var(--text-secondary)]">
-            🔍 Habit correlations unlock at 14 days
+            🔍 Stress pattern analysis unlocks at 14 days
           </p>
           <p className="mt-1 text-xs text-[var(--text-muted)]">
             {14 - totalDaysLogged} more {14 - totalDaysLogged === 1 ? 'day' : 'days'} to go
@@ -214,10 +229,10 @@ export function InsightsClient({ userId }: InsightsClientProps) {
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center">
           <p className="text-2xl mb-2">📊</p>
           <p className="text-sm font-medium text-[var(--text-secondary)]">
-            Your habit map starts here
+            Your wellbeing map starts here
           </p>
           <p className="mt-1 text-xs text-[var(--text-muted)]">
-            Write your first entry and Stride will begin tracking your habits automatically. No setup needed.
+            Write your first entry and MindLens will begin tracking your mental health patterns automatically. No setup needed.
           </p>
         </div>
       )}

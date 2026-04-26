@@ -64,7 +64,7 @@ export function RatingTrend({ data }: RatingTrendProps) {
     <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
       <div className="mb-4 flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-          Day Rating
+          Wellbeing Trend
         </p>
         <span className="text-xs text-[var(--text-muted)]">
           avg {avg.toFixed(1)}/10
@@ -104,7 +104,7 @@ export function RatingTrend({ data }: RatingTrendProps) {
           <Line
             type="monotone"
             dataKey="self_rating"
-            name="Rating"
+            name="Wellbeing score"
             stroke="#C084FC"
             strokeWidth={2}
             dot={{ r: 3, fill: '#C084FC', strokeWidth: 0 }}

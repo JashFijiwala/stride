@@ -124,6 +124,7 @@ export interface WeeklyInsight {
   correlations: string[]
   suggestion: string | null
   summary: string | null
+  encouragement?: string | null
   created_at: string
 }
 

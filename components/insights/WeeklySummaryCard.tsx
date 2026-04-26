@@ -22,12 +22,12 @@ export function WeeklySummaryCard({
     const daysNeeded = Math.max(0, 3 - totalDaysLogged)
     return (
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
-        <p className="text-sm font-semibold text-[var(--text-primary)]">Weekly Summary</p>
+        <p className="text-sm font-semibold text-[var(--text-primary)]">Weekly Wellbeing Report</p>
         {totalDaysLogged < 3 ? (
           <>
             <p className="mt-2 text-sm text-[var(--text-muted)]">
               Log {daysNeeded} more {daysNeeded === 1 ? 'day' : 'days'} to unlock your
-              first weekly summary.
+              first weekly wellbeing report.
             </p>
             <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--card-elevated)]">
               <div
@@ -42,7 +42,7 @@ export function WeeklySummaryCard({
         ) : (
           <div className="mt-3">
             <p className="text-sm text-[var(--text-muted)]">
-              You have enough data. Generate your first weekly report!
+              You have enough data. Generate your first weekly wellbeing report!
             </p>
             <button
               onClick={onGenerate}
@@ -81,7 +81,9 @@ export function WeeklySummaryCard({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-semibold text-[var(--text-primary)]">{weekLabel}</p>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">
+            Weekly Wellbeing Report · {weekLabel}
+          </p>
           <div className="mt-1 flex items-baseline gap-3">
             {insight.avg_rating !== null && (
               <span className="text-2xl font-bold text-[var(--accent)]">
@@ -134,10 +136,10 @@ export function WeeklySummaryCard({
         </div>
       )}
 
-      {/* Top wins */}
+      {/* What went well */}
       {insight.top_wins?.length > 0 && (
         <div>
-          <p className="mb-2 text-xs font-medium text-[var(--text-muted)]">Top Wins</p>
+          <p className="mb-2 text-xs font-medium text-[var(--text-muted)]">What went well 💚</p>
           <ul className="space-y-1">
             {insight.top_wins.slice(0, 3).map((win, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
@@ -149,10 +151,10 @@ export function WeeklySummaryCard({
         </div>
       )}
 
-      {/* Areas to watch */}
+      {/* Watch out for */}
       {insight.areas_to_watch?.length > 0 && (
         <div>
-          <p className="mb-2 text-xs font-medium text-[var(--text-muted)]">Areas to Watch</p>
+          <p className="mb-2 text-xs font-medium text-[var(--text-muted)]">Watch out for 🟡</p>
           <ul className="space-y-1">
             {insight.areas_to_watch.slice(0, 2).map((area, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
@@ -164,11 +166,46 @@ export function WeeklySummaryCard({
         </div>
       )}
 
+      {/* Patterns noticed */}
+      {insight.correlations?.length > 0 && (
+        <div>
+          <p className="mb-2 text-xs font-medium text-[var(--text-muted)]">Patterns noticed 🔍</p>
+          <ul className="space-y-1">
+            {insight.correlations.slice(0, 3).map((c, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
+                <span className="mt-0.5 text-[var(--accent)]">◈</span>
+                {c}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* This week, try… */}
+      {insight.suggestion && (
+        <div className="rounded-xl bg-[var(--card-elevated)] p-3">
+          <p className="mb-1 text-xs font-medium text-[var(--text-muted)]">This week, try… 💡</p>
+          <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
+            {insight.suggestion}
+          </p>
+        </div>
+      )}
+
       {/* Summary */}
       {insight.summary && (
-        <p className="text-sm leading-relaxed text-[var(--text-secondary)] border-t border-[var(--border)] pt-4">
+        <p className="border-t border-[var(--border)] pt-4 text-sm leading-relaxed text-[var(--text-secondary)]">
           {insight.summary}
         </p>
+      )}
+
+      {/* Encouragement (if API returns it) */}
+      {insight.encouragement && (
+        <div className="flex items-start gap-3 rounded-xl border border-[var(--accent)]/20 bg-[var(--accent)]/6 p-3">
+          <span className="text-base">💙</span>
+          <p className="text-sm leading-relaxed text-[var(--text-secondary)] italic">
+            {insight.encouragement}
+          </p>
+        </div>
       )}
     </motion.div>
   )

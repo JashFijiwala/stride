@@ -3,22 +3,17 @@
 import { motion } from 'framer-motion'
 import type { CorrelationResult } from '@/lib/utils/correlations'
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  sleep: '😴',
-  nutrition: '🥗',
-  exercise: '🏃',
-  'personal-growth': '📖',
-  work: '💻',
-  entertainment: '🎬',
-  'digital-wellness': '📵',
-  discipline: '🧘',
-  health: '💊',
-  social: '👥',
-  other: '✨',
+const NAME_EMOJI: Record<string, string> = {
+  'Sleep & your mood': '😴',
+  'Energy & your mood': '⚡',
+  'Coping exercises & your mood': '💚',
 }
 
 interface CorrelationCardProps {
-  correlation: CorrelationResult
+  correlation: CorrelationResult & {
+    with_label?: string
+    without_label?: string
+  }
   index: number
 }
 
@@ -26,6 +21,7 @@ export function CorrelationCard({ correlation, index }: CorrelationCardProps) {
   const isPositive = correlation.diff > 0
   const diffLabel = `${isPositive ? '+' : ''}${correlation.diff.toFixed(1)}`
   const diffColor = isPositive ? 'text-[var(--positive)]' : 'text-[var(--negative)]'
+  const emoji = NAME_EMOJI[correlation.habit_name] ?? '✨'
 
   return (
     <motion.div
@@ -44,13 +40,17 @@ export function CorrelationCard({ correlation, index }: CorrelationCardProps) {
               <p className="font-semibold text-[var(--positive)]">
                 {correlation.avg_with.toFixed(1)}
               </p>
-              <p className="text-[var(--text-muted)]">with</p>
+              <p className="text-[var(--text-muted)]">
+                {correlation.with_label ?? 'with'}
+              </p>
             </div>
             <div className="text-center">
               <p className="font-semibold text-[var(--negative)]">
                 {correlation.avg_without.toFixed(1)}
               </p>
-              <p className="text-[var(--text-muted)]">without</p>
+              <p className="text-[var(--text-muted)]">
+                {correlation.without_label ?? 'without'}
+              </p>
             </div>
             <div className="text-center">
               <p className={`font-bold text-sm ${diffColor}`}>{diffLabel}</p>
@@ -58,7 +58,7 @@ export function CorrelationCard({ correlation, index }: CorrelationCardProps) {
             </div>
           </div>
         </div>
-        <span className="text-2xl">{CATEGORY_EMOJI.other}</span>
+        <span className="text-2xl">{emoji}</span>
       </div>
       <p className="mt-3 text-xs text-[var(--text-muted)]">
         Based on {correlation.occurrences} logged days
