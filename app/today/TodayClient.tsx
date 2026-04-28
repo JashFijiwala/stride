@@ -494,21 +494,26 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
                 onEdit={() => setEditing(true)}
               />
 
-              {/* Need support card — only visible in State 3 */}
-              <button
-                onClick={() => router.push('/coping')}
-                className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-indigo-500/30 bg-indigo-950/40 p-4 text-left transition-colors hover:border-indigo-400/50"
-              >
-                <div>
-                  <p className="text-sm font-medium text-[var(--text-primary)]">
-                    Take a breather 🌬️
-                  </p>
-                  <p className="mt-0.5 text-sm text-[var(--text-muted)]">
-                    A few minutes can make a difference
-                  </p>
-                </div>
-                <ArrowRight size={16} className="shrink-0 text-[var(--text-muted)]" />
-              </button>
+              {/* Need support card — only visible in State 3 when stress is detected */}
+              {(entries.some((e) => e.category === 'stress_signal') ||
+                mentalState?.stress_level === 'high' ||
+                mentalState?.stress_level === 'very_high' ||
+                (mentalState?.mood_score != null && mentalState.mood_score <= 5)) && (
+                <button
+                  onClick={() => router.push('/coping')}
+                  className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-indigo-500/30 bg-indigo-950/40 p-4 text-left transition-colors hover:border-indigo-400/50"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">
+                      Take a breather 🌬️
+                    </p>
+                    <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                      A few minutes can make a difference
+                    </p>
+                  </div>
+                  <ArrowRight size={16} className="shrink-0 text-[var(--text-muted)]" />
+                </button>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

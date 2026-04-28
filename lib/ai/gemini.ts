@@ -1,21 +1,15 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const MODEL = 'gemini-2.5-flash'
-
-let _genAI: GoogleGenerativeAI | null = null
-
-function getGenAI(): GoogleGenerativeAI {
-  if (!_genAI) {
-    const key = process.env.GEMINI_API_KEY
-    if (!key) throw new Error('GEMINI_API_KEY is not set')
-    _genAI = new GoogleGenerativeAI(key)
-  }
-  return _genAI
-}
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+const model = genAI.getGenerativeModel({
+  model: 'gemini-2.5-flash-lite',
+  generationConfig: {
+    maxOutputTokens: 8192,
+    temperature: 0.1,
+  },
+})
 
 export async function callGemini(prompt: string): Promise<string> {
-  const genAI = getGenAI()
-
   // Split role preamble into system message; pass the rest as user content.
   // If the prompt starts with "You are", extract that paragraph as the system prompt.
   let systemPrompt = 'You are a JSON-only response assistant. Return only valid JSON. No markdown. No extra text.'
@@ -27,15 +21,19 @@ export async function callGemini(prompt: string): Promise<string> {
     userPrompt = prompt.slice(roleMatch[1].length)
   }
 
-  // Append JSON enforcement instruction (replaces response_format: json_object)
+  // Append JSON enforcement instruction
   systemPrompt += '\n\nReturn only valid JSON, no markdown, no preamble.'
 
-  const model = genAI.getGenerativeModel({
-    model: MODEL,
+  const geminiModel = genAI.getGenerativeModel({
+    model: 'gemini-2.5-flash-lite',
     systemInstruction: systemPrompt,
+    generationConfig: {
+      maxOutputTokens: 8192,
+      temperature: 0.1,
+    },
   })
 
-  const result = await model.generateContent(userPrompt)
+  const result = await geminiModel.generateContent(userPrompt)
   return result.response.text()
 }
 
