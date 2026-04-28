@@ -101,8 +101,6 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
   }, [])
 
   const handleSave = useCallback(async () => {
-    if (!text.trim()) return
-
     const entryData = {
       raw_text: text.trim(),
       self_rating: rating,
@@ -258,7 +256,7 @@ export function JournalInput({ logDate, existingLog, onSaved }: JournalInputProp
       {!offlineSaved && (
         <motion.button
           onClick={handleSave}
-          disabled={!text.trim() || saving}
+          disabled={saving}
           whileTap={{ scale: 0.97 }}
           className="relative w-full overflow-hidden rounded-2xl bg-[var(--accent)] py-4 text-base font-semibold text-white transition-opacity disabled:opacity-40"
         >

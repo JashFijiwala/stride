@@ -97,6 +97,8 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
   const [isLoading, setIsLoading] = useState(true)
   const [showNewDayModal, setShowNewDayModal] = useState(false)
   const [startingNewDay, setStartingNewDay] = useState(false)
+  const [showClearModal, setShowClearModal] = useState(false)
+  const [clearingEntry, setClearingEntry] = useState(false)
 
   interface HabitNudge { id: string; habit_id: string; habit_name: string }
   const [nudges, setNudges] = useState<HabitNudge[]>([])
@@ -284,6 +286,27 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
     if (result.flagged) showCrisis()
     setLog((prev) => (prev ? { ...prev, ai_parsed: true } : prev))
   }, [log, currentLogDate, analyseEntry])
+
+  const handleClearEntry = useCallback(async () => {
+    if (!log) return
+    setClearingEntry(true)
+    try {
+      const supabase = createClient()
+      await Promise.all([
+        supabase.from('parsed_entries').delete().eq('daily_log_id', log.id),
+        supabase.from('mental_states').delete().eq('daily_log_id', log.id),
+      ])
+      await supabase.from('daily_logs').delete().eq('id', log.id)
+      setLog(null)
+      setEntries([])
+      setMentalState(null)
+      setWellbeingInsight(null)
+      setEditing(false)
+      setShowClearModal(false)
+    } finally {
+      setClearingEntry(false)
+    }
+  }, [log])
 
   const handleConfirmNewDay = useCallback(async () => {
     setStartingNewDay(true)
@@ -473,6 +496,15 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
                   Get AI insights about your day
                 </p>
               )}
+
+              <p className="text-center">
+                <button
+                  onClick={() => setShowClearModal(true)}
+                  className="text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
+                >
+                  Clear entry
+                </button>
+              </p>
             </motion.div>
           )}
 
@@ -514,6 +546,15 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
                   <ArrowRight size={16} className="shrink-0 text-[var(--text-muted)]" />
                 </button>
               )}
+
+              <p className="text-center">
+                <button
+                  onClick={() => setShowClearModal(true)}
+                  className="text-xs text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
+                >
+                  Clear entry
+                </button>
+              </p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -530,6 +571,57 @@ export function TodayClient({ userId, currentLogDate, profileName, email, nameSe
           </div>
         )}
       </div>
+
+      {/* ── Clear entry confirmation modal ────────────────────────────────── */}
+      <AnimatePresence>
+        {showClearModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm"
+            onClick={(e) => e.target === e.currentTarget && setShowClearModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6"
+            >
+              <h2 className="text-base font-semibold text-[var(--text-primary)]">
+                Clear today&apos;s entry?
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
+                This will delete everything you&apos;ve logged today so you can start over.
+              </p>
+              <div className="mt-5 flex gap-2">
+                <button
+                  onClick={() => setShowClearModal(false)}
+                  className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--card-elevated)] py-2.5 text-sm font-medium text-[var(--text-secondary)]"
+                >
+                  Cancel
+                </button>
+                <motion.button
+                  onClick={handleClearEntry}
+                  disabled={clearingEntry}
+                  whileTap={{ scale: 0.97 }}
+                  className="flex-1 rounded-xl bg-[var(--negative)] py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+                >
+                  {clearingEntry ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 size={14} className="animate-spin" />
+                      Clearing…
+                    </span>
+                  ) : (
+                    'Yes, clear'
+                  )}
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Start New Day confirmation modal ──────────────────────────────── */}
       <AnimatePresence>
